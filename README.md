@@ -1,9 +1,54 @@
 # GRID-RIFT
 
-An outdoor science-fiction tactical simulation, built to support changing rules, varied opponents, and repeatable experiments.
+An outdoor science-fiction tactical simulation with replaceable rules, readable combat, and repeatable experiments.
 
-**Status: handoff preparation. No playable game is implemented yet.**
+**Handoff v0.1.0 · 20 October 2026 · Implementation has not started.**
 
-The first intended experience is a compact MOBA-like encounter. Its rules must remain replaceable rather than becoming permanent assumptions in the simulation core.
+This repository currently contains a development handoff, TypeScript boundary contracts, validated experiment specifications, and handoff checks. It does **not** yet contain a game, simulation engine, working bots, trained models, or a browser preview. Passing the handoff checks does not mean the simulation works.
 
-The implementation handoff, contracts, experiment definitions, and validation tools are being added in the next commit.
+## Start here
+
+Read [CODEX_START.md](CODEX_START.md), then [AGENTS.md](AGENTS.md). Begin with **Stage 0: prove the simulation boundaries**, not the full MOBA.
+
+The first playable delivery is a small encounter with one human-controlled unit and one opponent. The later baseline is a 3v3, two-lane battlefield. A third specification removes lanes, towers, combat, and progression to test whether the architecture genuinely supports different rules.
+
+## Check the handoff
+
+Use Node.js 22.12 or newer and npm. Dependency versions are pinned in `package.json`; commit and use the lockfile when available.
+
+```sh
+npm install
+npm run check
+```
+
+After the lockfile is present, use `npm ci` for repeatable installs. `check` validates documents and experiments, runs handoff regression tests, and type-checks the interfaces. There is deliberately no `dev` command until Codex implements a browser client.
+
+## Document map
+
+| Read | Purpose |
+| --- | --- |
+| [Vision](docs/01-VISION.md) | Product purpose, experience, and scope |
+| [Principles](docs/02-DESIGN-PRINCIPLES.md) | Boundaries that survive game redesigns |
+| [Architecture](docs/03-SYSTEM-ARCHITECTURE.md) | Ownership, dependencies, and replacement seams |
+| [Simulation contract](docs/04-SIMULATION-CONTRACT.md) | Time, commands, ordering, snapshots, replay |
+| [Agent intelligence](docs/05-AGENT-INTELLIGENCE.md) | Fair observations, policy changes, reaction budgets |
+| [Gameplay](docs/06-GAMEPLAY-SYSTEMS.md) | Concrete first playable and later baseline |
+| [World and visuals](docs/07-WORLD-AND-VISUAL-DIRECTION.md) | Open-air technological wilderness and readability |
+| [Experiments](docs/08-EXPERIMENT-FRAMEWORK.md) | Versioning, validation, paired comparisons |
+| [Evaluation](docs/09-EVALUATION-METRICS.md) | Operational measures and limits on interpretation |
+| [Roadmap](docs/10-DEVELOPMENT-ROADMAP.md) | Work order and evidence-based acceptance gates |
+| [Change protocol](docs/11-CHANGE-PROTOCOL.md) | Safe radical changes and decision records |
+| [Status](docs/STATUS.md) | What exists, what is proposed, what is untested |
+| [References](docs/REFERENCES.md) | Primary technical references and verification notes |
+
+`contracts/` holds machine-readable and TypeScript boundaries. `experiments/` holds specifications, not executable modules. `scripts/` and `tests/` check the handoff itself.
+
+## Non-negotiable separation
+
+Simulation owns truth. Controllers request actions. The renderer displays permitted state. Evaluation observes without changing outcomes. An experiment chooses modules and rules. No layer may quietly perform another layer's job.
+
+Start small. Preserve evidence. Make major changes cheap without building a universal engine first.
+
+## Data and assets
+
+Runs should remain local unless an export is explicitly requested. Do not commit personal play logs, credentials, provider keys, third-party proprietary assets, or copied game content. The visual direction is original science fiction; no affiliation with another game or film is implied. No project license has been selected by the owner.

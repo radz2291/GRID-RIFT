@@ -1,0 +1,15 @@
+{
+  "name": "grid-rift",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GRID-RIFT development handoff and contract validation; no playable runtime yet",
+  "type": "module",
+  "engines": {"node": ">=22.12.0"},
+  "scripts": {
+    "check": "npm run validate:handoff && npm test && npm run typecheck",
+    "validate:handoff": "node scripts/validate-handoff.mjs",
+    "test": "node --test tests/handoff.test.mjs",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "devDependencies": {"ajv": "8.17.1", "typescript": "5.9.3"}
+}

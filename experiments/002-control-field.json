@@ -1,0 +1,21 @@
+{
+  "$schema": "../contracts/experiment.schema.json",
+  "schemaVersion": "0.1.0", "apiVersion": "grid-rift/v0",
+  "id": "002-control-field", "version": "0.1.0", "title": "Three-participant non-combat control field", "status": "draft", "seed": 155921,
+  "timing": {"tickRateHz": 20, "maxTicks": 2400, "hashEveryTicks": 20, "snapshotEveryTicks": 200, "maxCommandLeadTicks": 40, "maxCommandAgeTicks": 20},
+  "teams": [{"id": "alpha"}, {"id": "beta"}, {"id": "gamma"}],
+  "participants": [
+    {"id": "p1", "teamId": "alpha", "archetypeId": "scout", "controller": {"kind": "human", "policyId": "human.mouse-keyboard", "policyVersion": "0.1.0", "decisionIntervalTicks": 1, "reactionTicks": 0, "actionLimitPerTick": 1}},
+    {"id": "p2", "teamId": "beta", "archetypeId": "scout", "controller": {"kind": "local-policy", "policyId": "baseline.zone-seeker", "policyVersion": "0.1.0", "decisionIntervalTicks": 4, "reactionTicks": 4, "actionLimitPerTick": 1}},
+    {"id": "p3", "teamId": "gamma", "archetypeId": "scout", "controller": {"kind": "local-policy", "policyId": "baseline.zone-seeker", "policyVersion": "0.1.0", "decisionIntervalTicks": 4, "reactionTicks": 4, "actionLimitPerTick": 1}}
+  ],
+  "modules": [
+    {"id": "world.planar", "version": "0.1.0", "config": {"width": 80, "depth": 80, "layout": "open-field"}},
+    {"id": "movement.planar", "version": "0.1.0", "config": {"speed": 6, "bodyRadius": 0.6}},
+    {"id": "perception.radius-los", "version": "0.1.0", "config": {"radius": 20, "shareTeamVision": false}},
+    {"id": "objective.relay", "version": "0.1.0", "config": {"zoneCount": 3, "radius": 6, "captureTicks": 20, "scorePerTick": 1, "requirePresence": true}},
+    {"id": "rules.relay-score", "version": "0.1.0", "config": {"scoreToWin": 900, "timeoutTiebreak": "score-then-draw"}}
+  ],
+  "evaluation": {"id": "tactical-observations", "version": "0.1.0", "metrics": ["outcome", "objective-tradeoff", "interface-quality"], "storage": "local-only", "recordInputs": true, "recordEvents": true},
+  "presentation": {"theme": "outdoor-neon-frontier", "camera": "tilted-top-down", "view": "controller"}
+}

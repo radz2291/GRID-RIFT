@@ -1,0 +1,55 @@
+{
+  "catalogVersion": "0.1.0",
+  "note": "Specification catalog only. No runtime module is implemented by this file. Runtime must verify concrete implementations and their versions.",
+  "modules": {
+    "world.planar": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": [], "provides": ["world"],
+      "configSchema": {"type": "object", "additionalProperties": false, "required": ["width", "depth", "layout"], "properties": {
+        "width": {"type": "number", "exclusiveMinimum": 0, "maximum": 10000}, "depth": {"type": "number", "exclusiveMinimum": 0, "maximum": 10000}, "layout": {"enum": ["duel-ridges", "dual-lane", "open-field"]}
+      }}
+    },
+    "movement.planar": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": ["world.planar"], "provides": [],
+      "configSchema": {"type": "object", "additionalProperties": false, "required": ["speed", "bodyRadius"], "properties": {"speed": {"type": "number", "exclusiveMinimum": 0, "maximum": 100}, "bodyRadius": {"type": "number", "exclusiveMinimum": 0, "maximum": 10}}}
+    },
+    "perception.radius-los": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": ["world.planar"], "provides": [],
+      "configSchema": {"type": "object", "additionalProperties": false, "required": ["radius", "shareTeamVision"], "properties": {"radius": {"type": "number", "exclusiveMinimum": 0, "maximum": 10000}, "shareTeamVision": {"type": "boolean"}}}
+    },
+    "combat.runner": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": ["movement.planar", "perception.radius-los"], "provides": ["combat"],
+      "configSchema": {"type": "object", "additionalProperties": false,
+        "required": ["health", "basicDamage", "basicRange", "basicIntervalTicks", "pulseDamage", "pulseRange", "pulseRadius", "pulseSpeed", "pulseWindupTicks", "pulseCooldownTicks", "dashDistance", "dashDurationTicks", "dashCooldownTicks", "respawnTicks"],
+        "properties": {
+          "health": {"type": "integer", "minimum": 1}, "basicDamage": {"type": "integer", "minimum": 1}, "basicRange": {"type": "number", "exclusiveMinimum": 0}, "basicIntervalTicks": {"type": "integer", "minimum": 1},
+          "pulseDamage": {"type": "integer", "minimum": 1}, "pulseRange": {"type": "number", "exclusiveMinimum": 0}, "pulseRadius": {"type": "number", "exclusiveMinimum": 0}, "pulseSpeed": {"type": "number", "exclusiveMinimum": 0}, "pulseWindupTicks": {"type": "integer", "minimum": 1}, "pulseCooldownTicks": {"type": "integer", "minimum": 1},
+          "dashDistance": {"type": "number", "exclusiveMinimum": 0}, "dashDurationTicks": {"type": "integer", "minimum": 1}, "dashCooldownTicks": {"type": "integer", "minimum": 1}, "respawnTicks": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
+    "objective.relay": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": ["world.planar", "movement.planar"], "provides": ["objective"],
+      "requiresTeamAssignments": true,
+      "configSchema": {"type": "object", "additionalProperties": false, "required": ["zoneCount", "radius", "captureTicks", "scorePerTick", "requirePresence"], "properties": {
+        "zoneCount": {"type": "integer", "minimum": 1, "maximum": 16}, "radius": {"type": "number", "exclusiveMinimum": 0}, "captureTicks": {"type": "integer", "minimum": 1}, "scorePerTick": {"type": "integer", "minimum": 1}, "requirePresence": {"const": true}
+      }}
+    },
+    "rules.relay-score": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": ["objective.relay"], "provides": ["termination"],
+      "configSchema": {"type": "object", "additionalProperties": false, "required": ["scoreToWin", "timeoutTiebreak"], "properties": {"scoreToWin": {"type": "integer", "minimum": 1}, "timeoutTiebreak": {"const": "score-then-draw"}}}
+    },
+    "lane.skirmish": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": ["world.planar", "movement.planar", "combat.runner"], "provides": ["lanes"],
+      "requiresTeamAssignments": true,
+      "configSchema": {"type": "object", "additionalProperties": false, "required": ["laneCount", "towersPerTeam", "waveIntervalTicks", "creepsPerWave", "towerHealth", "coreHealth"], "properties": {
+        "laneCount": {"const": 2}, "towersPerTeam": {"const": 2}, "waveIntervalTicks": {"type": "integer", "minimum": 1}, "creepsPerWave": {"type": "integer", "minimum": 1, "maximum": 20}, "towerHealth": {"type": "integer", "minimum": 1}, "coreHealth": {"type": "integer", "minimum": 1}
+      }}
+    },
+    "rules.core-destruction": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": ["lane.skirmish", "objective.relay"], "provides": ["termination"],
+      "configSchema": {"type": "object", "additionalProperties": false, "required": ["unlockAfterTowers", "simultaneousResult", "timeoutTiebreak"], "properties": {
+        "unlockAfterTowers": {"type": "integer", "minimum": 1}, "simultaneousResult": {"const": "draw"}, "timeoutTiebreak": {"const": "core-fraction-tower-health-relay-score"}
+      }}
+    }
+  }
+}
