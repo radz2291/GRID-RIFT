@@ -37,3 +37,11 @@ Proposed interactive target: stable, responsive play on an ordinary desktop brow
 ## Visual acceptance questions
 
 Does one screenshot read as outdoors? Can a player see where they can move? Can they distinguish an attack warning from decoration? Can they identify the objective and escape route? Does the same authoritative encounter remain playable with effects reduced? These require actual screenshots and play evidence in Stage 1, not an architectural claim.
+
+## Approved visual reference direction · 20 October 2026
+
+See [the six-image reference manifest](VISUAL-REFERENCES.md). Its two **revised** battlefield references supersede the earlier overly simple arena concepts. The image package is currently distributed separately, as stated in the manifest.
+
+The player's challenge should emerge from terrain: changing elevation, sight-blocking ridges, concealment, multiple routes with distinct time/exposure trade-offs, relay-internal cover, a risky flank, and a secondary tactical pocket. These are **design candidates**, not already implemented or mandated all at once. The initial encounter must still be playable and measurable; layer complexity through tests rather than mechanically reproducing an illustration.
+
+Maintain elegant, efficient, iconic silhouettes and restrained cyan/amber lighting: clean outdoor techno-wilderness, not a glossy interior, crowded science-fiction city, or heavily decorated fantasy arena. The environment may be geometrically complex without being visually noisy.
