@@ -34,3 +34,7 @@ Owner plays the Stage 1 encounter and reviews controls, visibility, route choice
 ## Open implementation choices
 
 Balance, terrain refinement, accessibility/rebinding and broader hardware/browser testing remain open. No Worker was needed for the measured small encounter. Stage 0's local numeric/checkpoint scope remains in [decision 0002](decisions/0002-stage0-runtime.md); Stage 1's authored map and mechanics are recorded in [the Stage 1 implementation note](STAGE1-IMPLEMENTATION.md).
+
+## 21 October controls clarification
+
+Click-directed orders use experiment/human policy 0.3.0: A + click an enemy locks pursuit; A + click ground stays tied to that area and stops when clear at the destination. Nearby automatic attacks no longer create permanent locks. Earlier 0.1.0/0.2.0 experiment definitions remain intact. See the controls revision for scope and evidence; Stage 1 experience review remains open.

@@ -1,4 +1,5 @@
 import { createGame } from '../../game/session.js';
+import { attackClickIntent } from '../../agents/human-orders.js';
 import { Battlefield, publicView } from './renderer.js';
 import type { JsonObject } from '../../../contracts/agent-interface.js';
 import type { Point } from '../../../contracts/tactical-types.js';
@@ -77,7 +78,7 @@ canvas.addEventListener('pointerdown', e => {
     e.preventDefault(); cancelAim(); const hit = renderer.hit(pointer); selectedId = hit;
     if (hit) command('combat.attack', { targetId: hit }); else command('movement.move-to', { x: pointer.x, z: pointer.z });
   } else if (e.button === 0 && targeting) { command('combat.cast', { ability: 'pulse', x: pointer.x, z: pointer.z }); cancelAim(); }
-  else if (e.button === 0 && attackMoving) { command('control.attack-move', { x: pointer.x, z: pointer.z }); selectedId = null; cancelAim(); }
+  else if (e.button === 0 && attackMoving) { const hit = renderer.hit(pointer), order = attackClickIntent(pointer, hit); command(order.kind, order.payload); selectedId = hit; cancelAim(); }
   else if (e.button === 0) { const hit = renderer.hit(pointer); selectedId = hit; if (hit) command('combat.attack', { targetId: hit }); }
 });
 canvas.addEventListener('pointerup', () => { dragging = false; controls(); }); canvas.addEventListener('lostpointercapture', () => { dragging = false; controls(); });

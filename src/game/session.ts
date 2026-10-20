@@ -1,4 +1,4 @@
-import specification from '../../experiments/000-vertical-slice-controls.json' with {type:'json'};
+import specification from '../../experiments/000-vertical-slice-click-orders.json' with {type:'json'};
 import envelope from '../../contracts/experiment.schema.json' with {type:'json'};
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import type { ActionIntent, JsonObject, Observation } from '../../contracts/agent-interface.js';
@@ -39,7 +39,7 @@ export function createGame(browserMetadata:JsonObject={}):GameSession {
   let events:{tick:number;events:readonly DomainEvent[]}[]=[],hashes:{tick:number;hash:string}[]=[];
   function restart() {
     engine=new Engine(config,tacticalModules);
-    manifest={runId:`encounter-${Date.now()}`,schemaVersion:'0.1.0',apiVersion:'grid-rift/v0',experimentId:specification.id,experimentVersion:specification.version,experimentHash:hash(specification),expandedConfiguration:clone(specification) as unknown as JsonObject,seed:config.seed,sourceCommit:build.sourceCommit,dirtyTreeFingerprint:build.dirtyTreeFingerprint,dependencyLockHash:build.dependencyLockHash,runtime:{...build.runtime,...browserMetadata},modules:config.modules.map(({id,version})=>({id,version})),controllers:specification.participants.map(p=>({id:p.id,policyId:p.controller.policyId,policyVersion:p.controller.policyVersion,budget:config.controllers.find(c=>c.id===p.id)!.budget})),evaluationVersion:'encounter/0.2.0',inputMode:'live'};
+    manifest={runId:`encounter-${Date.now()}`,schemaVersion:'0.1.0',apiVersion:'grid-rift/v0',experimentId:specification.id,experimentVersion:specification.version,experimentHash:hash(specification),expandedConfiguration:clone(specification) as unknown as JsonObject,seed:config.seed,sourceCommit:build.sourceCommit,dirtyTreeFingerprint:build.dirtyTreeFingerprint,dependencyLockHash:build.dependencyLockHash,runtime:{...build.runtime,...browserMetadata},modules:config.modules.map(({id,version})=>({id,version})),controllers:specification.participants.map(p=>({id:p.id,policyId:p.controller.policyId,policyVersion:p.controller.policyVersion,budget:config.controllers.find(c=>c.id===p.id)!.budget})),evaluationVersion:'encounter/0.3.0',inputMode:'live'};
     runner=new Runner(engine,{p2:utilityPolicy},hash(manifest),config.controllers,config.seed);
     sequence=0;pending=null;human=initialHumanOrder();humanOrders=[];events=[];hashes=[{tick:0,hash:engine.stateHash()}];
   }
@@ -55,7 +55,7 @@ export function createGame(browserMetadata:JsonObject={}):GameSession {
       if(!unit?.alive)return {accepted:false,reason:'dead'};
       if(kind==='control.stop') {
         if(Object.keys(payload).length)return {accepted:false,reason:'invalid-action'};
-        pending={kind,version:'0.2.0',payload:{}};return {accepted:true,reason:'queued'};
+        pending={kind,version:'0.3.0',payload:{}};return {accepted:true,reason:'queued'};
       }
       if(kind==='combat.cast') {
         const ready=payload.ability==='pulse'?unit.pulseReadyTick:unit.dashReadyTick;
@@ -98,6 +98,6 @@ export function createGame(browserMetadata:JsonObject={}):GameSession {
       const result=runner.step();events.push({tick:result.tick,events:result.events});hashes.push({tick:engine.tick,hash:engine.stateHash()});
     },
     terminal:()=>clone(engine.snapshot().terminal),
-    exportRun:()=>clone({format:'grid-rift/encounter-export/v0',manifest,config,inputs:runner.inputJournal,humanOrders,humanControllerState:{version:'0.2.0',standingOrder:human,unsampledOrder:pending},admissions:runner.admissionJournal,observations:runner.observationJournal,events,hashes,checkpoint:runner.checkpoint(),terminal:engine.snapshot().terminal,finalHash:engine.stateHash()})
+    exportRun:()=>clone({format:'grid-rift/encounter-export/v0',manifest,config,inputs:runner.inputJournal,humanOrders,humanControllerState:{version:'0.3.0',standingOrder:human,unsampledOrder:pending},admissions:runner.admissionJournal,observations:runner.observationJournal,events,hashes,checkpoint:runner.checkpoint(),terminal:engine.snapshot().terminal,finalHash:engine.stateHash()})
   };
 }

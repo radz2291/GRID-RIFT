@@ -8,6 +8,10 @@ export interface HumanOrderState {
   destination:Point|null;
 }
 export const initialHumanOrder = ():HumanOrderState=>({mode:'idle',focus:null,destination:null});
+/** The clicked object defines the primitive order; automatic acquisition never creates a lock. */
+export function attackClickIntent(point:Point,targetId:string|null):ActionIntent {
+  return targetId?{kind:'combat.attack',version:'0.1.0',payload:{targetId}}:{kind:'control.attack-move',version:'0.3.0',payload:{x:point.x,z:point.z}};
+}
 const distance=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.z-b.z);
 export function planHumanOrder(observation:Observation, previous:HumanOrderState):{state:HumanOrderState;action:ActionIntent|null} {
   const state:HumanOrderState={...previous,destination:previous.destination?{...previous.destination}:null};
@@ -22,7 +26,10 @@ export function planHumanOrder(observation:Observation, previous:HumanOrderState
     state.mode='idle';state.destination=null;
   }
   const visible=(observation.entities as unknown as TacticalEntity[]).filter(e=>e.components.combat?.alive&&e.components.movement&&e.components.movement.teamId!==body.teamId);
+  const acquire=state.mode==='attack-move'?Math.min(12,world['perception.radius-los'].radius):world['combat.runner'].basicRange;
+  const nearby=(entity:TacticalEntity):boolean=>distance(body,entity.components.movement!)<=acquire&&(state.mode!=='attack-move'||!state.destination||distance(state.destination,entity.components.movement!)<=acquire);
   let target=state.focus?visible.find(e=>e.id===state.focus):undefined;
+  if(target&&state.mode!=='attack'&&!nearby(target))target=undefined;
   if(state.focus&&!target) {
     state.focus=null;
     if(state.mode==='attack') {
@@ -32,9 +39,8 @@ export function planHumanOrder(observation:Observation, previous:HumanOrderState
     }
   }
   if(!target) {
-    const acquire=state.mode==='attack-move'?Math.min(12,world['perception.radius-los'].radius):world['combat.runner'].basicRange;
-    target=visible.filter(e=>distance(body,e.components.movement!)<=acquire).sort((a,b)=>distance(body,a.components.movement!)-distance(body,b.components.movement!)||(a.id<b.id?-1:a.id>b.id?1:0))[0];
-    if(target){state.focus=target.id;if(state.mode==='idle')state.mode='attack';}
+    target=visible.filter(nearby).sort((a,b)=>distance(body,a.components.movement!)-distance(body,b.components.movement!)||(a.id<b.id?-1:a.id>b.id?1:0))[0];
+    if(target)state.focus=target.id;
   }
   if(target) {
     const targetBody=target.components.movement!,range=world['combat.runner'].basicRange;
@@ -46,5 +52,7 @@ export function planHumanOrder(observation:Observation, previous:HumanOrderState
     return {state,action:body.destination&&distance(body.destination,destination)<.25?null:move(destination)};
   }
   if(state.mode==='attack-move'&&state.destination&&distance(body,state.destination)>.5)return {state,action:body.destination&&distance(body.destination,state.destination)<.25?null:move(state.destination)};
+  if(state.mode==='attack-move')return {state:{mode:'hold',focus:null,destination:null},action:move(body)};
+  if(unit.targetId||body.destination)return {state,action:move(body)};
   return {state,action:null};
 }
