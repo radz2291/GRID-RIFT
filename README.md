@@ -4,7 +4,7 @@ An outdoor science-fiction tactical simulation with replaceable rules, readable 
 
 **Handoff v0.1.0 · 20 October 2026 · Implementation has not started.**
 
-This repository currently contains a development handoff, TypeScript boundary contracts, validated experiment specifications, and handoff checks. It does **not** yet contain a game, simulation engine, working bots, trained models, or a browser preview. Passing the handoff checks does not mean the simulation works.
+This repository contains a development handoff, TypeScript boundary contracts, validated experiment specifications, and automated handoff checks. It does **not** yet contain a game, simulation engine, working bots, trained models, or a browser preview. Passing the handoff checks does not mean the simulation works.
 
 ## Start here
 
@@ -14,14 +14,14 @@ The first playable delivery is a small encounter with one human-controlled unit 
 
 ## Check the handoff
 
-Use Node.js 22.12 or newer and npm. Dependency versions are pinned in `package.json`; commit and use the lockfile when available.
+Use a supported Node.js runtime meeting the minimum version of 22.12, and npm. The verified run used Node.js 22.23.3. Dependency versions and integrity data are recorded in `package-lock.json`.
 
 ```sh
-npm install
+npm ci
 npm run check
 ```
 
-After the lockfile is present, use `npm ci` for repeatable installs. `check` validates documents and experiments, runs handoff regression tests, and type-checks the interfaces. There is deliberately no `dev` command until Codex implements a browser client.
+`check` validates documents and experiments, runs 25 handoff regression tests, and type-checks the interfaces. GitHub Actions runs the same checks on pushes and pull requests. See [the verification record](docs/VERIFICATION.md) for actual results and limits. There is deliberately no `dev` command until Codex implements a browser client.
 
 ## Document map
 
@@ -38,6 +38,7 @@ After the lockfile is present, use `npm ci` for repeatable installs. `check` val
 | [Evaluation](docs/09-EVALUATION-METRICS.md) | Operational measures and limits on interpretation |
 | [Roadmap](docs/10-DEVELOPMENT-ROADMAP.md) | Work order and evidence-based acceptance gates |
 | [Change protocol](docs/11-CHANGE-PROTOCOL.md) | Safe radical changes and decision records |
+| [Initial decision](docs/decisions/0001-simulation-first.md) | Architecture rationale and reconsideration criteria |
 | [Status](docs/STATUS.md) | What exists, what is proposed, what is untested |
 | [References](docs/REFERENCES.md) | Primary technical references and verification notes |
 

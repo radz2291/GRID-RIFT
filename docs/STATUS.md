@@ -5,10 +5,12 @@ Handoff version: 0.1.0. Prepared: 20 October 2026.
 | Area | Status |
 | --- | --- |
 | Vision, principles, architecture, stages | Specified |
-| TypeScript observation/action/simulation interfaces | Specified; handoff type-check available |
-| Experiment envelope and module configuration schemas | Specified; handoff validation available |
-| Three draft experiment definitions | Specified, not executable scenarios |
-| Handoff regression tests | Included; see verification record for actual results |
+| TypeScript observation/action/simulation interfaces | Specified; handoff type-check passed |
+| Experiment envelope and module configuration schemas | Specified; handoff validation passed |
+| Three draft experiment definitions | Validated specifications, not executable scenarios |
+| Handoff regression tests | 25 passed, 0 failed on GitHub Actions |
+| Dependency lockfile | Preserved from the successful verification run |
+| GitHub Actions handoff checking | Configured and successfully executed |
 | Simulation core, scheduler, PRNG, snapshots, replay | Not implemented |
 | Module implementations and runtime registry | Not implemented |
 | Playable browser client and visuals | Not implemented |
@@ -16,6 +18,8 @@ Handoff version: 0.1.0. Prepared: 20 October 2026.
 | Runtime fairness, determinism, performance | Not yet tested |
 | Human capability assessment validity | Not established; no such claim is made |
 | Owner approval of a playable experience | Not requested yet |
+
+See [the verification record](VERIFICATION.md) for the tested commit, runtime, exact command, results, and limits.
 
 ## Next work unit
 
