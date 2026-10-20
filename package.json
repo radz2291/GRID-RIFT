@@ -2,14 +2,25 @@
   "name": "grid-rift",
   "version": "0.1.0",
   "private": true,
-  "description": "GRID-RIFT development handoff and contract validation; no playable runtime yet",
+  "description": "GRID-RIFT Stage 0 headless simulation proof",
   "type": "module",
-  "engines": {"node": ">=22.12.0"},
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "check": "npm run validate:handoff && npm test && npm run typecheck",
+    "check": "npm run validate:handoff && npm test && npm run typecheck && npm run check:boundaries && npm run test:runtime",
     "validate:handoff": "node scripts/validate-handoff.mjs",
     "test": "node --test tests/handoff.test.mjs",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "build": "tsc --project tsconfig.build.json",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "test:runtime": "npm run build && node --test tests/runtime/*.test.mjs",
+    "demo": "npm run build && node dist/src/adapters/headless/cli.js demo",
+    "replay": "npm run build && node dist/src/adapters/headless/cli.js replay"
   },
-  "devDependencies": {"ajv": "8.17.1", "typescript": "5.9.3"}
+  "devDependencies": {
+    "@types/node": "22.19.0",
+    "ajv": "8.20.0",
+    "typescript": "5.9.3"
+  }
 }

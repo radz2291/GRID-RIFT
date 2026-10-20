@@ -1,16 +1,16 @@
 # GRID-RIFT visual reference package · v0.2
 
 ## Status
-Six generated reference images have been selected and packaged. **The image binaries are not yet present in the GitHub repository**; they are provided as a separate ZIP from this conversation. Place them under `assets/visual-references/` with the filenames listed below. Do not treat missing images as existing repo assets.
+All six supplied PNGs are present in the canonical `assets/visual-references/` directory. Their SHA-256 hashes were verified against the manifest below on 2026-10-20. The owner's originals in `visual-references/` are retained. The revised gameplay and topology references (01 and 02) were opened and visually inspected: both are readable, including route annotations and the central relay. These are concept references, not measured geometry or implemented gameplay.
 
 | File | Purpose | Priority |
 |---|---|---|
-| `00-cover.png` | Identity and atmosphere; not a gameplay geometry specification | Mood |
-| `01-gameplay-tactical-v2.png` | **Revised** actual gameplay viewing angle and terrain density | High |
-| `02-arena-layout-tactical-v2.png` | **Revised** tactical topology and route choices | High |
-| `03-runner-character.png` | First unit silhouette, helmet, front/side/back appearance | High |
-| `04-environment-kit.png` | Reusable environmental blocks and relay form | Medium |
-| `05-combat-language.png` | Readable windup, projectile, dash and relay states | High |
+| [00-cover.png](../assets/visual-references/00-cover.png) | Identity and atmosphere; not a gameplay geometry specification | Mood |
+| [01-gameplay-tactical-v2.png](../assets/visual-references/01-gameplay-tactical-v2.png) | **Revised** actual gameplay viewing angle and terrain density | High |
+| [02-arena-layout-tactical-v2.png](../assets/visual-references/02-arena-layout-tactical-v2.png) | **Revised** tactical topology and route choices | High |
+| [03-runner-character.png](../assets/visual-references/03-runner-character.png) | First unit silhouette, helmet, front/side/back appearance | High |
+| [04-environment-kit.png](../assets/visual-references/04-environment-kit.png) | Reusable environmental blocks and relay form | Medium |
+| [05-combat-language.png](../assets/visual-references/05-combat-language.png) | Readable windup, projectile, dash and relay states | High |
 
 ## Approval and intent
 The owner preferred a **restrained, iconic Tron/Daft Punk-influenced** direction over a crowded cinematic science-fiction poster. Retain the appeal of smooth helmets, clean geometric forms, purposeful light, cyan/amber, and broad outdoor horizons. Avoid copying a specific franchise design.
@@ -40,4 +40,4 @@ cf1f264d0d1d53bab3866dec40fe5d7857cbc54c6b292f6b65e0d5ed64c10a38  04-environment
 adbd9a26366164b6d3dd43ca19633ac69e124d335deeec1fe0a3d7dc8f6c69ae  05-combat-language.png
 ```
 
-When assets have been uploaded, replace this status note with verified file links and retain these hashes as a reference point. This is a **visual reference-only** update, not a change to the simulation architecture or a claim that Stage 1 is implemented.
+The verified file links above retain these hashes as a reference point. This is a **visual reference-only** update, not a change to the simulation architecture or a claim that Stage 1 is implemented.

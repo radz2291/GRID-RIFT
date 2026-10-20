@@ -134,6 +134,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     process.exitCode = 1;
   } else {
     console.log(`Handoff validation passed: ${experimentPaths().length} experiment specifications; document links resolved.`);
-    console.log("Scope: schemas and specification semantics only. Runtime, bots, and playable client are NOT implemented or tested.");
+    console.log("Scope: schemas and specification semantics only. Runtime acceptance is checked separately by npm run test:runtime; no playable client is claimed.");
   }
 }

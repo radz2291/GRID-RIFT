@@ -1,30 +1,31 @@
 # Implementation status
 
-Handoff version: 0.1.0. Prepared: 20 October 2026.
+Updated: 20 October 2026. Stage 0 implemented and runtime-tested; owner review pending.
 
 | Area | Status |
 | --- | --- |
-| Vision, principles, architecture, stages | Specified |
-| TypeScript observation/action/simulation interfaces | Specified; handoff type-check passed |
-| Experiment envelope and module configuration schemas | Specified; handoff validation passed |
-| Three draft experiment definitions | Validated specifications, not executable scenarios |
-| Handoff regression tests | 25 passed, 0 failed on GitHub Actions |
-| Dependency lockfile | Preserved from the successful verification run |
-| GitHub Actions handoff checking | Configured and successfully executed |
-| Simulation core, scheduler, PRNG, snapshots, replay | Not implemented |
-| Module implementations and runtime registry | Not implemented |
-| Playable browser client and visuals | Not implemented |
-| Actual bot behaviour or learned/adaptive policy | Not implemented |
-| Runtime fairness, determinism, performance | Not yet tested |
-| Human capability assessment validity | Not established; no such claim is made |
-| Owner approval of a playable experience | Not requested yet |
+| Foundation specifications and existing contracts | Preserved |
+| Three tactical experiment definitions | Validated specifications; gameplay modules still unimplemented |
+| Headless fixed-tick runtime and ordered command validation | Implemented and tested |
+| Named seeded random streams, finite JSON, canonical SHA-256 | Implemented and tested within declared runtime/build scope |
+| Module registry, schemas, dependency ordering and ownership | Implemented and tested with the tiny race fixture |
+| Copied permitted observations and private receipts | Hidden-state non-interference tests pass |
+| Idle and scored-step local policies | Implemented and swappable by configuration; ordinary scripted logic |
+| World snapshot and complete local runner checkpoint | Nonzero-tick continuation tests pass |
+| Local manifest, input/event/observation journals and replay | Replay and intentional corruption checks pass |
+| Read-only presentation sink and offline descriptive metrics | Tested to leave simulation results unchanged |
+| Architecture import checks | Positive and negative source fixtures tested |
+| Six approved visual reference PNGs | All published SHA-256 values verified; canonical assets present |
+| Browser encounter, combat, terrain, abilities, relay, respawn | Not implemented; Stage 1 |
+| Learned policies, hosted inference, networking | Not implemented |
+| Human capability assessment or satisfying gameplay | Not established; no such claim is made |
 
-See [the verification record](VERIFICATION.md) for the tested commit, runtime, exact command, results, and limits.
+See [Stage 0 verification](STAGE0-VERIFICATION.md) for commands, acceptance mapping, evidence location, and limitations. The [original handoff verification](VERIFICATION.md) is retained as historical evidence.
 
-## Next work unit
+## Next gate
 
-Stage 0 in `CODEX_START.md` and `docs/10-DEVELOPMENT-ROADMAP.md`. Keep handoff checks separate from runtime tests. Update this file as evidence becomes available; do not mark a requirement implemented merely because its interface exists.
+Present Stage 0 evidence for owner review. Proposed Stage 1: one human Runner against one local AI, a versioned outdoor map with meaningful route choices, movement/vision/combat/abilities, relay, death/respawn, outcomes, restart, and readable browser controls. Keep Stage 0 regression tests. Do not begin Stage 2 or infer exact geometry from reference pixels.
 
 ## Open implementation choices
 
-PRNG and numeric precision policy; canonical hash implementation; exact module lifecycle API details discovered in Stage 0; browser build tooling; measured need for a Worker; initial map geometry; basic-attack launch/impact semantics; actual six-controller balance. Defaults are supplied where they support a bounded first build. None justify building a universal engine first.
+Browser build tooling, measured need for a Worker, initial map geometry, basic-attack launch/impact semantics, and actual balance remain Stage 1 or later decisions. Stage 0's local numeric and checkpoint scope is documented in [decision 0002](decisions/0002-stage0-runtime.md).

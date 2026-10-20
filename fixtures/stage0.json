@@ -1,0 +1,24 @@
+{
+  "id": "stage0-race",
+  "version": "0.1.0",
+  "seed": 104729,
+  "tickRateHz": 20,
+  "maxTicks": 24,
+  "maxCommandLeadTicks": 4,
+  "maxCommandAgeTicks": 4,
+  "controllers": [
+    {
+      "id": "a", "actors": ["body-a"],
+      "budget": { "decisionIntervalTicks": 1, "reactionTicks": 1, "actionLimitPerTick": 1 },
+      "policyId": "baseline.step", "policyVersion": "0.1.0"
+    },
+    {
+      "id": "b", "actors": ["body-b"],
+      "budget": { "decisionIntervalTicks": 1, "reactionTicks": 1, "actionLimitPerTick": 1 },
+      "policyId": "baseline.idle", "policyVersion": "0.1.0"
+    }
+  ],
+  "modules": [
+    { "id": "fixture.race", "version": "0.1.0", "config": { "goal": 8, "maxPosition": 12, "visibility": 2 } }
+  ]
+}
