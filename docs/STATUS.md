@@ -27,6 +27,8 @@ See [Stage 1 verification](STAGE1-VERIFICATION.md) for current commands, accepta
 
 ## Next gate
 
+Stage 1 feedback revision adds continuous attack orders, attack-move, a hand cursor for camera panning, temporary keyboard camera peeks, and ability recharge bars. Experiment/human policy 0.2.0 preserves the original 0.1.0 definition and evidence. See [controls revision](STAGE1-CONTROLS.md). The battlefield remains a provisional test arena.
+
 Owner plays the Stage 1 encounter and reviews controls, visibility, route choices, pacing and visual direction. Correct that experience before adding content. Stage 2 has not started; 3v3, lanes, towers and progression remain deferred.
 
 ## Open implementation choices

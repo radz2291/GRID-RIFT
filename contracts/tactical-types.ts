@@ -34,7 +34,7 @@ export interface TacticalWorld {
   'world.planar': ArenaMap;
   'movement.planar': { speed: number; bodyRadius: number };
   'perception.radius-los': { radius: number };
-  'combat.runner': { projectiles: Projectile[]; traces: CombatTrace[]; basicRange: number; pulseRange: number; pulseRadius: number; dashDistance: number };
+  'combat.runner': { projectiles: Projectile[]; traces: CombatTrace[]; basicRange: number; pulseRange: number; pulseRadius: number; dashDistance: number; pulseCooldownTicks: number; dashCooldownTicks: number };
   'objective.relay': RelayView;
   'rules.relay-score': { terminal: string; winners: string[] };
 }

@@ -11,6 +11,16 @@ try { renderer = new Battlefield(canvas); } catch { el('overlay').innerHTML = '<
 let observation = game.observe(), running = false, started = false, ended = false, targeting = false, reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pointer: Point | null = null, selectedId: string | null = null, last = performance.now(), accumulated = 0, noticeUntil = 0, dragging = false, dragX = 0, dragY = 0;
 let receiptKey = '';
+let attackMoving = false, grip = false;
+const cameraKeys = new Set<string>();
+function controls(): void {
+  canvas.classList.toggle('grip', grip); canvas.classList.toggle('dragging', dragging); canvas.classList.toggle('aiming', targeting || attackMoving);
+  const peek = cameraKeys.size > 0;
+  renderer.peek(Number(cameraKeys.has('KeyX')) - Number(cameraKeys.has('KeyZ')), Number(cameraKeys.has('KeyC')));
+  const label = el('control-mode'); label.hidden = !(dragging || grip || peek || attackMoving);
+  label.textContent = dragging ? '✊ CAMERA PAN' : grip ? '✋ CAMERA · LEFT DRAG TO PAN' : peek ? 'CAMERA PEEK · RELEASE TO RETURN' : attackMoving ? 'A · ATTACK MOVE · LEFT CLICK GROUND · ESC TO CANCEL' : '';
+}
+function resetCameraControls(): void { dragging = false; grip = false; cameraKeys.clear(); controls(); }
 const frameTimes: number[] = [], stepTimes: number[] = [], inputWaits: number[] = [];
 let pendingInputAt: number | null = null;
 let slowNoticeAt = 0;
@@ -23,7 +33,7 @@ function metrics(values: number[]): { samples: number; meanMs: number | null; p9
 renderer.effects(reduced);
 el('effects').setAttribute('aria-pressed', String(reduced));
 function notice(message: string): void { el('notice').textContent = message; noticeUntil = performance.now() + 2600; el('notice').classList.add('show'); }
-function cancelAim(): void { targeting = false; el('aim-label').hidden = true; el('pulse').classList.remove('targeting'); }
+function cancelAim(): void { targeting = false; attackMoving = false; el('aim-label').hidden = true; el('pulse').classList.remove('targeting'); controls(); }
 function setRunning(value: boolean, pauseReason = 'manual'): void {
   if (!value && running) pauseEvents.push({ tick: observation.tick, reason: pauseReason });
   running = value; accumulated = 0; last = performance.now(); game.discardInput(); pendingInputAt = null; cancelAim();
@@ -43,7 +53,7 @@ function reason(code: string): string {
   if (text.includes('target') || text.includes('visible')) return 'No visible target — move to gain sight';
   return 'Action unavailable: ' + code.replaceAll(/[-_.]/g, ' ');
 }
-function preparePulse(): void { if (!running) { notice('Start or resume the encounter first'); return; } targeting = true; el('aim-label').hidden = false; el('pulse').classList.add('targeting'); notice('Aim with the cursor, then left-click to fire'); }
+function preparePulse(): void { if (!running) { notice('Start or resume the encounter first'); return; } if (el<HTMLButtonElement>('pulse').disabled) { notice(el('pulse-cd').textContent === 'OFFLINE' ? 'Runner is rebuilding — wait for respawn' : 'Pulse is recharging'); return; } cancelAim(); targeting = true; el('aim-label').hidden = false; el('pulse').classList.add('targeting'); controls(); notice('Aim with the cursor, then left-click to fire'); }
 function dash(): void { if (!pointer) { notice('Point at open ground, then press W'); return; } command('combat.cast', { ability: 'dash', x: pointer.x, z: pointer.z }); cancelAim(); }
 el('start').addEventListener('click', () => { if (ended) restart(); started = true; el('overlay').hidden = true; setRunning(true); });
 el('pause').addEventListener('click', () => { if (!started || ended) return; setRunning(!running); });
@@ -61,22 +71,31 @@ canvas.addEventListener('contextmenu', e => e.preventDefault());
 canvas.addEventListener('pointermove', e => { pointer = renderer.point(e.clientX, e.clientY); if (dragging) { renderer.pan(e.clientX - dragX, e.clientY - dragY); dragX = e.clientX; dragY = e.clientY; } });
 canvas.addEventListener('pointerdown', e => {
   pointer = renderer.point(e.clientX, e.clientY);
-  if (e.button === 1) { e.preventDefault(); dragging = true; dragX = e.clientX; dragY = e.clientY; canvas.setPointerCapture(e.pointerId); return; }
+  if (e.button === 1 || (e.button === 0 && e.shiftKey)) { e.preventDefault(); dragging = true; dragX = e.clientX; dragY = e.clientY; canvas.setPointerCapture(e.pointerId); controls(); return; }
   if (!pointer) { notice('Choose a location inside the plateau'); return; }
   if (e.button === 2) {
     e.preventDefault(); cancelAim(); const hit = renderer.hit(pointer); selectedId = hit;
     if (hit) command('combat.attack', { targetId: hit }); else command('movement.move-to', { x: pointer.x, z: pointer.z });
   } else if (e.button === 0 && targeting) { command('combat.cast', { ability: 'pulse', x: pointer.x, z: pointer.z }); cancelAim(); }
+  else if (e.button === 0 && attackMoving) { command('control.attack-move', { x: pointer.x, z: pointer.z }); selectedId = null; cancelAim(); }
+  else if (e.button === 0) { const hit = renderer.hit(pointer); selectedId = hit; if (hit) command('combat.attack', { targetId: hit }); }
 });
-canvas.addEventListener('pointerup', () => { dragging = false; }); canvas.addEventListener('lostpointercapture', () => { dragging = false; });
+canvas.addEventListener('pointerup', () => { dragging = false; controls(); }); canvas.addEventListener('lostpointercapture', () => { dragging = false; controls(); });
 canvas.addEventListener('wheel', e => { e.preventDefault(); renderer.wheel(e.deltaY); }, { passive: false });
 window.addEventListener('keydown', e => {
-  if (e.repeat || (e.target instanceof HTMLElement && ['INPUT', 'TEXTAREA'].includes(e.target.tagName))) return;
-  if (['Space', 'KeyQ', 'KeyW', 'Escape'].includes(e.code)) e.preventDefault();
-  if (e.code === 'KeyQ') preparePulse(); else if (e.code === 'KeyW') dash(); else if (e.code === 'Space') center(); else if (e.code === 'Escape') { if (targeting) cancelAim(); else if (started && !ended) setRunning(!running); }
+  if (e.target instanceof HTMLElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+  if (['ShiftLeft', 'ShiftRight'].includes(e.code)) { grip = true; controls(); return; }
+  if (['KeyZ', 'KeyX', 'KeyC'].includes(e.code)) { e.preventDefault(); cameraKeys.add(e.code); controls(); return; }
+  if (e.repeat) return;
+  if (['Space', 'KeyQ', 'KeyW', 'KeyA', 'KeyS', 'Escape'].includes(e.code)) e.preventDefault();
+  if (e.code === 'KeyQ') preparePulse(); else if (e.code === 'KeyW') dash(); else if (e.code === 'Space') center();
+  else if (e.code === 'KeyA') { if (!running) { notice('Start or resume the encounter first'); return; } cancelAim(); attackMoving = true; controls(); }
+  else if (e.code === 'KeyS') { command('control.stop', {}); selectedId = null; cancelAim(); }
+  else if (e.code === 'Escape') { if (targeting || attackMoving) cancelAim(); else if (started && !ended) setRunning(!running); }
 });
-document.addEventListener('visibilitychange', () => { if (document.hidden && running) setRunning(false, 'tab-hidden'); });
-window.addEventListener('blur', () => { dragging = false; if (running) setRunning(false, 'window-blur'); });
+window.addEventListener('keyup', e => { if (e.code.startsWith('Shift')) grip = e.shiftKey; cameraKeys.delete(e.code); controls(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { resetCameraControls(); if (running) setRunning(false, 'tab-hidden'); } });
+window.addEventListener('blur', () => { resetCameraControls(); if (running) setRunning(false, 'window-blur'); });
 function hud(): void {
   const { world, entities } = publicView(observation); const me = entities.find(e => observation.controlledEntityIds.includes(e.id)); const c = me?.components.combat, m = me?.components.movement;
   const relay = world['objective.relay']; const own = m?.teamId ?? Object.keys(relay.scores)[0] ?? ''; const other = Object.keys(relay.scores).find(k => k !== own) ?? '';
@@ -87,7 +106,16 @@ function hud(): void {
   if (c) {
     el('hp-fill').style.width = `${Math.max(0, c.hp) / c.maxHp * 100}%`; el('hp-label').textContent = `${Math.max(0, c.hp)} / ${c.maxHp}`;
     el('life-state').textContent = c.alive ? 'ONLINE' : `RESPAWN ${Math.max(0, (c.respawnTick - observation.tick) / 20).toFixed(1)}s`;
-    for (const [id, ready] of [['pulse-cd', c.pulseReadyTick], ['dash-cd', c.dashReadyTick]] as const) el(id).textContent = ready <= observation.tick ? 'READY' : `${((ready - observation.tick) / 20).toFixed(1)}s`;
+    const combat = world['combat.runner'];
+    for (const [id, ready, duration] of [['pulse', c.pulseReadyTick, combat.pulseCooldownTicks], ['dash', c.dashReadyTick, combat.dashCooldownTicks]] as const) {
+      const remaining = Math.max(0, ready - observation.tick), charge = Math.round((1 - Math.min(1, remaining / Math.max(1, duration))) * 100);
+      const button = el<HTMLButtonElement>(id); button.disabled = !c.alive || remaining > 0 || !running;
+      button.classList.toggle('ready', remaining === 0 && c.alive); button.classList.toggle('recharging', remaining > 0);
+      el(`${id}-cd`).textContent = !c.alive ? 'OFFLINE' : remaining === 0 ? 'READY' : `${(remaining / 20).toFixed(1)}s`;
+      el(`${id}-fill`).style.width = `${charge}%`;
+      el(`${id}-charge`).setAttribute('aria-valuenow', String(charge));
+      el(`${id}-charge`).setAttribute('aria-valuetext', !c.alive ? 'Runner rebuilding' : remaining === 0 ? 'Ready' : `${charge}% recharged`);
+    }
   }
   const receipt = observation.receipts.at(-1); if (receipt) { const key = `${receipt.sequence}/${receipt.tick}/${receipt.result}`; if (key !== receiptKey && receipt.result !== 'accepted') notice(reason(receipt.reason)); receiptKey = key; }
   if (selectedId && !entities.some(e => e.id === selectedId)) selectedId = null;

@@ -14,6 +14,11 @@ export class Battlefield {
   private plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   private target = new THREE.Vector3(40, 0, 30);
   private zoom = 58;
+  private peekYaw = 0;
+  private peekLift = 0;
+  private desiredYaw = 0;
+  private desiredLift = 0;
+  private cameraFrameAt = performance.now();
   private map?: ArenaMap;
   private actors = new Map<string, THREE.Group>();
   private dynamic = new THREE.Group();
@@ -167,12 +172,28 @@ export class Battlefield {
     return entities.find(e => !this.observation!.controlledEntityIds.includes(e.id) && e.components.combat?.alive && e.components.movement && Math.hypot(e.components.movement.x - point.x, e.components.movement.z - point.z) < 1.4)?.id ?? null;
   }
   center(point: Point): void { this.target.set(point.x, 0, point.z); this.updateCamera(); }
-  pan(dx: number, dy: number): void { this.target.x -= dx * this.zoom / this.canvas.clientHeight; this.target.z -= dy * this.zoom / this.canvas.clientHeight * 1.5; this.updateCamera(); }
+  pan(dx: number, dy: number): void {
+    const scale = this.zoom / this.canvas.clientHeight, yaw = this.peekYaw * THREE.MathUtils.degToRad(25);
+    this.target.x -= (dx * Math.cos(yaw) + dy * 1.5 * Math.sin(yaw)) * scale;
+    this.target.z -= (-dx * Math.sin(yaw) + dy * 1.5 * Math.cos(yaw)) * scale; this.updateCamera();
+  }
   wheel(delta: number): void { this.zoom = THREE.MathUtils.clamp(this.zoom + delta * .035, 30, 82); this.updateCamera(); }
   effects(value: boolean): void { this.reduced = value; this.gl.setPixelRatio(value ? 1 : Math.min(devicePixelRatio, 1.5)); }
-  private updateCamera(): void { if (this.map) { this.target.x = THREE.MathUtils.clamp(this.target.x, 8, this.map.width - 8); this.target.z = THREE.MathUtils.clamp(this.target.z, 8, this.map.depth - 8); } this.camera.position.copy(this.target).add(new THREE.Vector3(0, this.zoom * .78, this.zoom)); this.camera.lookAt(this.target); }
+  peek(yaw: number, lift: number): void { this.desiredYaw = THREE.MathUtils.clamp(yaw, -1, 1); this.desiredLift = THREE.MathUtils.clamp(lift, 0, 1); }
+  private updateCamera(): void {
+    if (this.map) { this.target.x = THREE.MathUtils.clamp(this.target.x, 8, this.map.width - 8); this.target.z = THREE.MathUtils.clamp(this.target.z, 8, this.map.depth - 8); }
+    const yaw = this.peekYaw * THREE.MathUtils.degToRad(25), radius = this.zoom * (1 - .22 * this.peekLift);
+    this.camera.position.copy(this.target).add(new THREE.Vector3(Math.sin(yaw) * radius, this.zoom * (.78 + .45 * this.peekLift), Math.cos(yaw) * radius)); this.camera.lookAt(this.target);
+  }
   private resize(): void { this.camera.aspect = innerWidth / innerHeight; this.camera.updateProjectionMatrix(); this.gl.setSize(innerWidth, innerHeight, false); this.updateCamera(); }
-  render(): void { this.gl.render(this.scene, this.camera); }
+  render(): void {
+    const now = performance.now(), dt = Math.min(.1, Math.max(0, (now - this.cameraFrameAt) / 1000)); this.cameraFrameAt = now;
+    const blend = this.reduced ? 1 : 1 - Math.exp(-dt * 14);
+    this.peekYaw = THREE.MathUtils.lerp(this.peekYaw, this.desiredYaw, blend); this.peekLift = THREE.MathUtils.lerp(this.peekLift, this.desiredLift, blend);
+    if (Math.abs(this.peekYaw - this.desiredYaw) < .0001) this.peekYaw = this.desiredYaw;
+    if (Math.abs(this.peekLift - this.desiredLift) < .0001) this.peekLift = this.desiredLift;
+    this.updateCamera(); this.gl.render(this.scene, this.camera);
+  }
   capture(): string { this.render(); return this.gl.domElement.toDataURL('image/png'); }
   diagnostics(): { renderer: string | null; vendor: string | null; drawCalls: number; triangles: number; renderPixelRatio: number } {
     const context = this.gl.getContext(); const info = context.getExtension('WEBGL_debug_renderer_info');

@@ -15,7 +15,9 @@ npm run dev
 
 Open [the local game](http://127.0.0.1:4173) and choose **Start encounter**. Keep the terminal running; Ctrl+C stops the server. The server listens only on your own computer. Desktop mouse and keyboard plus WebGL are required. There is no account, paid service, or automatic upload.
 
-Right-click open ground to move or a visible rival within range to attack. Q prepares a directional pulse; left-click confirms it. W dashes toward the cursor. Escape cancels targeting or pauses. Space centres the camera; wheel zooms and middle-drag pans. Hold the relay uncontested to reach 600 points. Retreat to your marked spawn ring to recover health.
+Click a visible rival once (left or right button) to chase and keep attacking. Right-click open ground to move; nearby rivals are attacked when you arrive. A then left-click ground advances while engaging nearby visible rivals; S stops movement and automatic attacks. Q then left-click fires a pulse; W dashes toward the cursor. Ability bars refill until READY. Escape cancels targeting or pauses. Space centres the camera; wheel zooms. Shift + left-drag or middle-drag pans with a hand cursor. Hold Z / X to peek sideways or C for a higher angle; release to return to the default angle. Hold the relay uncontested to reach 600 points. Retreat to your marked spawn ring to recover health.
+
+The battlefield is a prototype for testing controls, sight lines and combat, with provisional layout and art. See [the controls revision](docs/STAGE1-CONTROLS.md) for the Stage 1 feedback changes and verification.
 
 `npm run build` produces the headless code in `dist/` and browser files in `web-dist/`. `npm run check` runs all checks. Use **Export run** during play, or **Export replay** on the end screen, to save a local record with screenshot and timing diagnostics. Replay it with `npm run replay:encounter -- <export.json>` from its matching source checkout. Reload the page after rebuilding; this small local server does not hot-reload a running encounter.
 
