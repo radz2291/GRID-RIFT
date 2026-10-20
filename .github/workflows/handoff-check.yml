@@ -1,0 +1,46 @@
+name: Handoff checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: handoff-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install handoff dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --ignore-scripts --no-audit --no-fund
+          else
+            npm install --ignore-scripts --no-audit --no-fund
+          fi
+      - name: Validate specifications and contracts
+        shell: bash
+        run: |
+          set -o pipefail
+          node --version | tee handoff-check.log
+          npm --version | tee -a handoff-check.log
+          npm run check 2>&1 | tee -a handoff-check.log
+      - name: Retain verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: handoff-verification
+          path: |
+            handoff-check.log
+            package-lock.json
+          retention-days: 14
