@@ -34,3 +34,10 @@ User feedback distinguishes a ground order from an explicit enemy selection. A +
 
 This is a human policy/presentation change with unchanged core and combat rules. The immutable successor `000-vertical-slice-click-orders.json` records experiment/human policy 0.3.0 and evaluation encounter/0.3.0; prior definitions and evidence remain intact. Three added regression tests distinguish click targets, verify the ground leash versus explicit pursuit, and prove ground completion and local idle acquisition. The earlier 0.2.0 browser evidence above remains historical; this revision requires owner play review.
 Verification: npm run check passed all 99 tests (27 handoff + 72 runtime/game), type checks, architecture boundaries and builds. Local output is runs/stage1-click-orders-check.log. The nine focused control tests passed, including an authoritative encounter replay. The local game server returned HTTP 200. This revision has not received a new manual browser playthrough.
+
+## Stationary attack facing - 21 October 2026
+
+The browser now orients a stationary Runner toward its current visible attack target on every observation, instead of retaining its last movement direction. The visor, weapon and direction marker rotate together. Movement/dash retain travel facing, and a confirmed pulse faces its own aim point. Missing, dead or coincident targets safely fall back to movement facing. This is presentation only: targeting, damage, cooldowns, authoritative facing and all experiment/policy identities remain unchanged. The helper reads only permitted observations and does not mutate them.
+
+Three regression tests check all target directions and moving targets, movement/dash/pulse priority, and hidden/dead/cleared/coincident targets. Owner visual review remains required after refreshing the browser.
+Verification: npm run check passed all 102 tests (27 handoff + 75 runtime/game), type checks, dependency boundaries and both builds. Local output: runs/stage1-facing-check.log. No new manual browser visual check is claimed; the local server was restarted for owner review.

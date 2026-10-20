@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { runnerYaw } from '../runner-facing.js';
 import type { Observation } from '../../../contracts/agent-interface.js';
 import type { ArenaMap, Point, TacticalEntity, TacticalWorld } from '../../../contracts/tactical-types.js';
 
@@ -120,7 +121,7 @@ export class Battlefield {
     for (const entity of entities) {
       const m = entity.components.movement, c = entity.components.combat; if (!m || !c?.alive) continue;
       let actor = this.actors.get(entity.id); if (!actor) { actor = this.runner(observation.controlledEntityIds.includes(entity.id)); this.actors.set(entity.id, actor); this.scene.add(actor); }
-      actor.visible = true; actor.position.set(m.x, 0, m.z); actor.rotation.y = Math.atan2(-m.facingX, -m.facingZ);
+      actor.visible = true; actor.position.set(m.x, 0, m.z); actor.rotation.y = runnerYaw(entity, entities);
     }
     // All transient graphics are rebuilt exclusively from this permitted observation.
     for (const child of [...this.dynamic.children]) { this.dynamic.remove(child); if (child instanceof THREE.Mesh) { child.geometry.dispose(); if (child.material instanceof THREE.Material) child.material.dispose(); } }

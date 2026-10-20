@@ -38,3 +38,5 @@ Balance, terrain refinement, accessibility/rebinding and broader hardware/browse
 ## 21 October controls clarification
 
 Click-directed orders use experiment/human policy 0.3.0: A + click an enemy locks pursuit; A + click ground stays tied to that area and stops when clear at the destination. Nearby automatic attacks no longer create permanent locks. Earlier 0.1.0/0.2.0 experiment definitions remain intact. See the controls revision for scope and evidence; Stage 1 experience review remains open.
+
+Stationary attack facing is corrected in presentation: the Runner model turns toward its visible attack target while standing still. Movement, dash and pulse aim keep their respective direction priorities. Rules and experiment versions are unchanged; see the controls revision. Awaiting owner visual review.
