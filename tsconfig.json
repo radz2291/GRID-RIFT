@@ -4,12 +4,15 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
+    "types": ["node"],
     "strict": true,
     "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
+    "resolveJsonModule": true,
     "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["contracts/**/*.ts", "src/**/*.ts", "tests/**/*.type-test.ts"]
+  "include": ["contracts/**/*.ts", "src/**/*.ts", "tests/**/*.type-test.ts"],
+  "exclude": ["src/adapters/browser/**"]
 }

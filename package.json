@@ -8,19 +8,31 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "check": "npm run validate:handoff && npm test && npm run typecheck && npm run check:boundaries && npm run test:runtime",
+    "check": "npm run validate:handoff && npm test && npm run typecheck && npm run check:boundaries && npm run build && node --test tests/runtime/*.test.mjs tests/stage1/*.test.mjs",
     "validate:handoff": "node scripts/validate-handoff.mjs",
     "test": "node --test tests/handoff.test.mjs",
-    "typecheck": "tsc --project tsconfig.json --noEmit",
-    "build": "tsc --project tsconfig.build.json",
+    "typecheck": "tsc --project tsconfig.json --noEmit && tsc --project tsconfig.browser.json --noEmit",
+    "build": "npm run build:core && npm run build:web",
+    "build:core": "tsc --project tsconfig.build.json",
+    "build:web": "node scripts/build-web.mjs",
+    "dev": "npm run build:core && node scripts/dev.mjs",
+    "start": "npm run dev",
+    "test:stage1": "npm run build && node --test tests/stage1/*.test.mjs",
     "check:boundaries": "node scripts/check-boundaries.mjs",
-    "test:runtime": "npm run build && node --test tests/runtime/*.test.mjs",
+    "test:runtime": "npm run build:core && node --test tests/runtime/*.test.mjs",
     "demo": "npm run build && node dist/src/adapters/headless/cli.js demo",
-    "replay": "npm run build && node dist/src/adapters/headless/cli.js replay"
+    "replay": "npm run build:core && node dist/src/adapters/headless/cli.js replay",
+    "replay:encounter": "npm run build:core && node scripts/replay-encounter.mjs"
   },
   "devDependencies": {
     "@types/node": "22.19.0",
+    "@types/three": "0.183.1",
     "ajv": "8.20.0",
+    "esbuild": "0.28.2",
     "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.4.0",
+    "three": "0.186.1"
   }
 }

@@ -14,3 +14,4 @@ test-results/
 Thumbs.db
 # User-supplied originals; verified canonical copies live under assets/visual-references.
 /visual-references/
+/web-dist/

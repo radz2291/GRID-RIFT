@@ -2,9 +2,24 @@
 
 An outdoor science-fiction tactical simulation with replaceable rules, readable combat, and repeatable experiments.
 
-**Stage 0 foundation · 20 October 2026 · Headless proof implemented; owner review pending.**
+**Stage 1 playable encounter · 20 October 2026 · Ready for experience review.**
 
-This repository now contains a working headless simulation proof, two simple local policies, command validation, snapshots, event journals, and action replay. The proof uses a tiny race fixture to test the boundaries. There is **no playable browser game yet**. The three tactical experiment specifications still require gameplay implementations.
+The first browser encounter is playable: one Runner against one local opponent in an outdoor arena with cover, line-of-sight, basic attacks, pulse shot, dash, relay capture, recovery, respawn, outcomes and restart. The simulation remains headless-capable. The later 3v3 and control-field scenarios remain specifications.
+
+## Play locally
+
+```sh
+npm ci
+npm run dev
+```
+
+Open [the local game](http://127.0.0.1:4173) and choose **Start encounter**. Keep the terminal running; Ctrl+C stops the server. The server listens only on your own computer. Desktop mouse and keyboard plus WebGL are required. There is no account, paid service, or automatic upload.
+
+Right-click open ground to move or a visible rival within range to attack. Q prepares a directional pulse; left-click confirms it. W dashes toward the cursor. Escape cancels targeting or pauses. Space centres the camera; wheel zooms and middle-drag pans. Hold the relay uncontested to reach 600 points. Retreat to your marked spawn ring to recover health.
+
+`npm run build` produces the headless code in `dist/` and browser files in `web-dist/`. `npm run check` runs all checks. Use **Export run** during play, or **Export replay** on the end screen, to save a local record with screenshot and timing diagnostics. Replay it with `npm run replay:encounter -- <export.json>` from its matching source checkout. Reload the page after rebuilding; this small local server does not hot-reload a running encounter.
+
+See [Stage 1 verification](docs/STAGE1-VERIFICATION.md) for evidence and limits. This is an initial playable prototype, not a balance or art-quality approval.
 
 ## Run Stage 0
 
@@ -21,7 +36,7 @@ See [Stage 0 verification](docs/STAGE0-VERIFICATION.md) for acceptance evidence,
 
 ## Start here
 
-Read [CODEX_START.md](CODEX_START.md), then [AGENTS.md](AGENTS.md) and [current status](docs/STATUS.md). Stage 0 awaits owner review before Stage 1 begins.
+Read [CODEX_START.md](CODEX_START.md), then [AGENTS.md](AGENTS.md) and [current status](docs/STATUS.md). The original startup brief is retained as historical context. Stage 1 now awaits experience review before any Stage 2 expansion.
 
 The first playable delivery is a small encounter with one human-controlled unit and one opponent. The later baseline is a 3v3, two-lane battlefield. A third specification removes lanes, towers, combat, and progression to test whether the architecture genuinely supports different rules.
 
@@ -34,7 +49,7 @@ npm ci
 npm run check
 ```
 
-`check` validates documents and experiments, retains the 25 handoff regression tests, type-checks all source and interfaces, enforces dependency boundaries, and builds/runs the separate runtime suite. GitHub Actions runs the same checks. [The original handoff record](docs/VERIFICATION.md) remains historical evidence. There is no `dev` command until Stage 1 implements a browser client.
+`check` validates documents and experiments, retains the 25 handoff regression tests, type-checks source and browser adapters separately, enforces dependency boundaries, builds both outputs, and runs Stage 0 and Stage 1 tests. GitHub Actions runs the same command. [The original handoff record](docs/VERIFICATION.md) remains historical evidence.
 
 ## Document map
 
@@ -55,7 +70,7 @@ npm run check
 | [Status](docs/STATUS.md) | What exists, what is proposed, what is untested |
 | [References](docs/REFERENCES.md) | Primary technical references and verification notes |
 
-`contracts/` holds machine-readable and TypeScript boundaries. `experiments/` holds specifications. `fixtures/stage0.json` selects the implemented proof module; `src/` holds its runtime. Handoff and runtime tests are separate. The runtime loader rejects specification-only gameplay modules.
+`contracts/` holds shared boundaries and module-specific tactical view types. `fixtures/stage0.json` still selects the Stage 0 proof. The game composes the six implemented modules selected by `000-vertical-slice`; the isolated Stage 0 CLI retains its smaller registry. Handoff, Stage 0 and Stage 1 tests remain separate.
 
 ## Non-negotiable separation
 

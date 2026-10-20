@@ -140,7 +140,13 @@ export class Engine implements Simulation {
       world={...world,[entry.selection.id]:projected.world}; entities.push(...projected.entities);
     }
     const visible=this.authority().events.filter(e=>e.audience.kind==='public'||(e.audience.kind==='controllers'&&e.audience.ids.includes(controllerId)));
-    return clone({apiVersion:'grid-rift/v0',controllerId,tick:this.tick,controlledEntityIds:controller.actors,world,entities,events:visible.map((e,i)=>({localId:`${this.tick}:${i}`,tick:e.tick,kind:e.kind,data:e.data})),receipts:this.authority().receipts[controllerId]??[],capabilities:this.modules.flatMap(m=>m.module.actions.map(a=>a.capability)),messages:[]});
+    const merged = new Map<string, typeof entities[number]>();
+    for (const entity of entities) {
+      const previous=merged.get(entity.id);
+      if (previous && Object.keys(entity.components).some(key=>Object.hasOwn(previous.components,key))) throw new Error(`Duplicate projected component ownership: ${entity.id}`);
+      merged.set(entity.id,{id:entity.id,components:{...previous?.components,...entity.components}});
+    }
+    return clone({apiVersion:'grid-rift/v0',controllerId,tick:this.tick,controlledEntityIds:controller.actors,world,entities:[...merged.values()].sort((a,b)=>compare(a.id,b.id)),events:visible.map((e,i)=>({localId:`${this.tick}:${i}`,tick:e.tick,kind:e.kind,data:e.data})),receipts:this.authority().receipts[controllerId]??[],capabilities:this.modules.flatMap(m=>m.module.actions.map(a=>a.capability)),messages:[]});
   }
   snapshot():WorldSnapshot { return clone(this.world); }
   restore(snapshot:WorldSnapshot):void {
