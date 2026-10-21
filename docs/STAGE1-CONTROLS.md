@@ -41,3 +41,12 @@ The browser now orients a stationary Runner toward its current visible attack ta
 
 Three regression tests check all target directions and moving targets, movement/dash/pulse priority, and hidden/dead/cleared/coincident targets. Owner visual review remains required after refreshing the browser.
 Verification: npm run check passed all 102 tests (27 handoff + 75 runtime/game), type checks, dependency boundaries and both builds. Local output: runs/stage1-facing-check.log. No new manual browser visual check is claimed; the local server was restarted for owner review.
+
+## Compact battlefield HUD - 21 October 2026
+
+Owner requested a clean battlefield and familiar Dota-style positioning. The minimap now sits bottom-left, Runner health/abilities share a compact bottom-centre console, and a reduced score bar stays top-centre. Utility actions are behind Menu at top-right; persistent instructions moved into Controls at bottom-right. The diagnostic frame-rate label is hidden from the play surface but export timing diagnostics remain available. Menu summaries and buttons retain normal Space activation. No simulation, policy, map, observation or experiment semantics change.
+
+Reference: Valve's official HUD overview, https://www.dota2.com/700/hud/ , emphasises smaller top/hero panels and more terrain visibility. Original GRID-RIFT visuals and existing controls are retained; no Dota assets, shop or unused systems are added.
+
+Browser review at 1280 x 720 confirmed bottom-left map, centred hero panel, no panel overlap, readable abilities, expandable menu/help and working Pause. New local evidence: runs/stage1-hud/hud.png. Broader viewport and hardware acceptance remain open.
+Verification: npm run check passed all 102 tests (27 handoff + 75 runtime/game), type checks, boundaries and both builds. Browser checks additionally confirmed Space opens Menu, utility buttons remain labelled and functional, and the console/map rectangles do not overlap. Browser error/warning log was empty. Full output: runs/stage1-hud-check.log.

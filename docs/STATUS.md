@@ -40,3 +40,5 @@ Balance, terrain refinement, accessibility/rebinding and broader hardware/browse
 Click-directed orders use experiment/human policy 0.3.0: A + click an enemy locks pursuit; A + click ground stays tied to that area and stops when clear at the destination. Nearby automatic attacks no longer create permanent locks. Earlier 0.1.0/0.2.0 experiment definitions remain intact. See the controls revision for scope and evidence; Stage 1 experience review remains open.
 
 Stationary attack facing is corrected in presentation: the Runner model turns toward its visible attack target while standing still. Movement, dash and pulse aim keep their respective direction priorities. Rules and experiment versions are unchanged; see the controls revision. Awaiting owner visual review.
+
+The Stage 1 HUD now follows compact edge positioning: minimap bottom-left, health/abilities bottom-centre, score top-centre, with utility actions/help in collapsed menus. Existing simulation and experiments are unchanged. Browser layout/menu review is complete at 1280 x 720; owner approval of readability and screen clarity remains open.

@@ -26,7 +26,7 @@ const frameTimes: number[] = [], stepTimes: number[] = [], inputWaits: number[] 
 let pendingInputAt: number | null = null;
 let slowNoticeAt = 0;
 const pauseEvents: { tick: number; reason: string }[] = [];
-const perfLabel = document.createElement('small'); perfLabel.style.cssText = 'position:absolute;left:32px;top:87px;font-size:8px;color:#97b0bc;letter-spacing:1px;pointer-events:none'; perfLabel.textContent = 'LOCAL ENCOUNTER · 20 TICKS / SEC'; document.querySelector('main')!.append(perfLabel);
+const perfLabel = document.createElement('small'); perfLabel.style.cssText = 'position:absolute;left:32px;top:87px;font-size:8px;color:#97b0bc;letter-spacing:1px;pointer-events:none'; perfLabel.hidden = true; perfLabel.textContent = 'LOCAL ENCOUNTER · 20 TICKS / SEC'; document.querySelector('main')!.append(perfLabel);
 function sample(values: number[], value: number): void { values.push(value); if (values.length > 3000) values.shift(); }
 function metrics(values: number[]): { samples: number; meanMs: number | null; p95Ms: number | null; maximumMs: number | null } {
   const ordered = [...values].sort((a, b) => a - b); return { samples: values.length, meanMs: values.length ? values.reduce((a, b) => a + b, 0) / values.length : null, p95Ms: ordered[Math.floor(ordered.length * .95)] ?? null, maximumMs: ordered.at(-1) ?? null };
@@ -85,6 +85,7 @@ canvas.addEventListener('pointerup', () => { dragging = false; controls(); }); c
 canvas.addEventListener('wheel', e => { e.preventDefault(); renderer.wheel(e.deltaY); }, { passive: false });
 window.addEventListener('keydown', e => {
   if (e.target instanceof HTMLElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+  if (e.code === 'Space' && e.target instanceof HTMLElement && e.target.closest('button, summary')) return;
   if (['ShiftLeft', 'ShiftRight'].includes(e.code)) { grip = true; controls(); return; }
   if (['KeyZ', 'KeyX', 'KeyC'].includes(e.code)) { e.preventDefault(); cameraKeys.add(e.code); controls(); return; }
   if (e.repeat) return;

@@ -19,7 +19,7 @@ Click a visible rival once (left or right button) to chase and keep attacking. R
 
 The battlefield is a prototype for testing controls, sight lines and combat, with provisional layout and art. See [the controls revision](docs/STAGE1-CONTROLS.md) for the Stage 1 feedback changes and verification.
 
-`npm run build` produces the headless code in `dist/` and browser files in `web-dist/`. `npm run check` runs all checks. Use **Export run** during play, or **Export replay** on the end screen, to save a local record with screenshot and timing diagnostics. Replay it with `npm run replay:encounter -- <export.json>` from its matching source checkout. Reload the page after rebuilding; this small local server does not hot-reload a running encounter.
+`npm run build` produces the headless code in `dist/` and browser files in `web-dist/`. `npm run check` runs all checks. Use **Menu → Export run** during play, or **Export replay** on the end screen, to save a local record with screenshot and timing diagnostics. Replay it with `npm run replay:encounter -- <export.json>` from its matching source checkout. Reload the page after rebuilding; this small local server does not hot-reload a running encounter.
 
 See [Stage 1 verification](docs/STAGE1-VERIFICATION.md) for evidence and limits. This is an initial playable prototype, not a balance or art-quality approval.
 
