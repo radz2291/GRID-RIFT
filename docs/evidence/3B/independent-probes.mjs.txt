@@ -1,0 +1,41 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Engine} from '../../dist/src/core/engine.js';
+import {Runner} from '../../dist/src/runner/runner.js';
+import {autonomousConfig,autonomousPolicies} from '../../dist/src/game/autonomous.js';
+import {autonomousModules} from '../../dist/src/modules/autonomy.js';
+const make=()=>new Engine(autonomousConfig(),autonomousModules);
+const cs=e=>e.snapshot().moduleStates['command.owned'];
+function edit(e,fn){const s=e.snapshot();fn(s.moduleStates);e.restore(s);}
+const command=(e,kind,payload,id='p1',seq=e.tick,execute=e.tick)=>({controllerId:id,actorId:`body-${id}`,receivedTick:e.tick,observedTick:e.tick,executeTick:execute,sequence:seq,action:{kind,version:'0.1.0',payload}});
+const intent=(e,revision=1)=>command(e,'command.order',{unitId:'body-a1',generation:0,orderId:'probe',revision,kind:'secure',target:{x:40,z:30},risk:'balanced',expiresTick:500});
+const step=(e,n)=>{for(let i=0;i<n;i++)e.step([]);};
+test('independent: transfer with pending report and delayed old owner rejects stale execution',()=>{
+ const e=make();edit(e,s=>s['movement.planar'].bodies.find(b=>b.id==='body-p2').teamId='alpha');
+ const stale=intent(e);stale.executeTick=6;e.step([intent(e)]);step(e,1);
+ const report=command(e,'command.report',{generation:0,revision:7,mode:'engaging'},'a1',0,4);step(e,2);e.step([report]);
+ assert.equal(cs(e).reportQueue.length,1);assert.equal(cs(e).reports.length,0);
+ e.step([command(e,'command.transfer',{unitId:'body-a1',generation:0,commanderId:'p2'})]);
+ assert.equal(cs(e).grants[0].generation,1);assert.equal(cs(e).reportQueue.length,0);assert.equal(cs(e).leaderQueue.length,0);
+ e.step([stale]);step(e,4);assert.equal(cs(e).orders.length,0);assert.equal(e.observe('p2').world['command.owned'].reports.length,0);assert.equal(e.observe('p1').world['command.owned'].grants.length,0);
+});
+test('independent: checkpoint while dead preserves latch then second genuine death increments',()=>{
+ const e=make();edit(e,s=>{const u=s['combat.runner'].units.find(u=>u.id==='body-p1');u.alive=false;u.respawnTick=100;});e.step([]);
+ const saved=e.snapshot(),other=make();other.restore(JSON.parse(JSON.stringify(saved)));step(e,6);step(other,6);assert.equal(e.stateHash(),other.stateHash());assert.equal(cs(other).grants[0].generation,1);
+ edit(other,s=>s['combat.runner'].units.find(u=>u.id==='body-p1').alive=true);other.step([]);assert.deepEqual(cs(other).deadLatch,[]);
+ edit(other,s=>{const u=s['combat.runner'].units.find(u=>u.id==='body-p1');u.alive=false;u.respawnTick=100;});other.step([]);assert.equal(cs(other).grants[0].generation,2);
+});
+test('independent: runtime cancel bounds residual movement and clears retained attack/path',()=>{
+ const e=make();edit(e,s=>{for(const b of s['movement.planar'].bodies)if(b.teamId==='beta'){b.x=75;b.z=55;}});
+ const r=new Runner(e,{a1:autonomousPolicies().a1},'probe',e.config.controllers);
+ const submit=c=>{const{controllerId,receivedTick,...p}=c;assert.equal(r.submit(controllerId,p).accepted,true);};submit(intent(e));for(let i=0;i<10;i++)r.step();
+ const before=e.snapshot().moduleStates['movement.planar'].bodies.find(b=>b.id==='body-a1');
+ submit(command(e,'command.order',{unitId:'body-a1',generation:0,orderId:'probe',revision:2,kind:'cancel'}));for(let i=0;i<7;i++)r.step();
+ const after=e.snapshot().moduleStates['movement.planar'].bodies.find(b=>b.id==='body-a1');assert.ok(Math.hypot(after.x-before.x,after.z-before.z)<=3);assert.equal(after.destination,null);assert.deepEqual(after.path,[]);assert.equal(e.snapshot().moduleStates['combat.runner'].units.find(u=>u.id==='body-a1').targetId,null);
+ for(let i=0;i<12;i++)r.step();const final=e.snapshot().moduleStates['movement.planar'].bodies.find(b=>b.id==='body-a1');assert.equal(final.x,after.x);assert.equal(final.z,after.z);
+});
+test('independent: report wire blocks fabricated position/health and team peer cannot issue',()=>{
+ const e=make();edit(e,s=>s['movement.planar'].bodies.find(b=>b.id==='body-p2').teamId='alpha');
+ const peer=intent(e);peer.controllerId='p2';peer.actorId='body-p2';peer.executeTick=4;assert.equal(e.checkCommand(peer),'not-permitted');
+ for(const field of ['hp','x','enemyPosition']){const report=command(e,'command.report',{generation:0,revision:1,mode:'engaging',[field]:10},'a1',0,2);assert.equal(e.checkCommand(report),'invalid-action');}
+});

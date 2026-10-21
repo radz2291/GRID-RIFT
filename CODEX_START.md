@@ -1,5 +1,7 @@
 # Codex: start here
 
+Current gate: 3A and 3B technical PASS, with independently verified playable candidate 527f4d5. Owner experience review is HELD, not approved. Read the live status first; preserve the delivered build and handle within-scope feedback. Do not restart accepted stages or begin 3C without the actual owner gate.
+
 Read [AGENTS.md](AGENTS.md), [current status](docs/STATUS.md), [current design](docs/CURRENT-DESIGN.md), [current handoff](CURRENT_CODEX_HANDOFF.md), [roadmap](docs/10-DEVELOPMENT-ROADMAP.md), and [development cycle](docs/DEVELOPMENT-CYCLE.md), in that order. Then read architecture, simulation contracts, agent intelligence, gameplay, and the code relevant to your stage.
 
 The repository includes a working Stage 0 runtime and owner-approved Stage 1 browser encounter. Do not restart them. The relay duel is a retained regression scenario, not the new product's primary loop. Stage 2 completion is not verified on the inspected remote refs; reconcile any later implementation before integration.

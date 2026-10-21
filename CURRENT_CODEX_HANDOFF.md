@@ -1,5 +1,9 @@
 # Current Codex handoff · Full development cycle
 
+## Current gate after delivery
+
+Stage 3A independently passed at a60e09e9b1d2479360c297bc4f66ea408499f985. Stage 3B independently passed at 527f4d5ded32f53ce53a0a2d54fd7fd4898f6cae after repair/re-verification: 150 regression tests, four independent probes, actual complete browser drill and strict replay. See [live status](docs/STATUS.md) and [3B independent verdict](docs/evidence/3B/independent-review-527f4d5.md). Owner experience approval is HELD. The next action is owner play/review and within-scope feedback repairs; do not restart 3A or advance to 3C without actual owner approval. The original cycle assignment below is retained for authority and lineage; this current gate supersedes its initial starting point.
+
 Repository: `https://github.com/radz2291/GRID-RIFT`
 Authorized development destination: `design/stage3a-autonomous-warfare`; ordinary non-force pushes. Do not merge `main` or deploy as part of this handoff.
 Baseline before documentation alignment: `751d23be0d1430add436133b4b59d44d79b975ff`. Approved playable source: `c84e86c84f114bd45c9e8168f83af5790f579675`; Stage 1 approval record is on `8a058ee16d8f2911015a6c6254d05fcfc144af16`.

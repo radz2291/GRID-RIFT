@@ -1,0 +1,9 @@
+
+> grid-rift@0.1.0 replay:autonomy
+> npm run build:core && node scripts/replay-encounter.mjs runs/independent/blocked-route.json
+
+
+> grid-rift@0.1.0 build:core
+> tsc --project tsconfig.build.json
+
+{"ticks":708,"finalHash":"361604fd1de44e81a126663bdc1e43df9cd252af4bf9c2fb8cc403ea6c954b41","terminal":{"kind":"running"}}

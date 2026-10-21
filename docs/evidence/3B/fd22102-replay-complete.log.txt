@@ -1,0 +1,9 @@
+
+> grid-rift@0.1.0 replay:autonomy
+> npm run build:core && node scripts/replay-encounter.mjs runs/independent/crossing-complete.json
+
+
+> grid-rift@0.1.0 build:core
+> tsc --project tsconfig.build.json
+
+{"ticks":1800,"finalHash":"317c46a3e0b8dfab6730184e1499d10d48786bba6b923d8e096c0f4a0c1fe18e","terminal":{"kind":"draw","reason":"timeout","scores":{"alpha":0,"beta":0},"tick":1800}}

@@ -1,6 +1,6 @@
 # Autonomous crossing: first playable scope
 
-This is the bounded 3B skirmish, not the 3C strategic economy. Technical verification and owner experience approval are separate; see [live status](STATUS.md).
+This is the bounded 3B skirmish, not the 3C strategic economy. Technical PASS was independently verified at 527f4d5; owner experience approval is HELD. See [live status](STATUS.md), [independent verdict](evidence/3B/independent-review-527f4d5.md) and [manager evidence](evidence/3B/manager-verification.md).
 
 ## Launch and play
 

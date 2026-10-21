@@ -1,0 +1,955 @@
+
+> grid-rift@0.1.0 check
+> npm run validate:handoff && npm test && npm run typecheck && npm run check:boundaries && npm run build && node --test tests/runtime/*.test.mjs tests/stage1/*.test.mjs tests/stage3/*.test.mjs
+
+
+> grid-rift@0.1.0 validate:handoff
+> node scripts/validate-handoff.mjs
+
+Handoff validation passed: 6 experiment specifications; document links resolved.
+Scope: schemas and specification semantics only. Runtime acceptance is checked separately by npm run test:runtime; no playable client is claimed.
+
+> grid-rift@0.1.0 test
+> node --test tests/handoff.test.mjs
+
+TAP version 13
+# Subtest: valid specification: experiments/000-vertical-slice-click-orders.json
+ok 1 - valid specification: experiments/000-vertical-slice-click-orders.json
+  ---
+  duration_ms: 18.7749
+  type: 'test'
+  ...
+# Subtest: valid specification: experiments/000-vertical-slice-controls.json
+ok 2 - valid specification: experiments/000-vertical-slice-controls.json
+  ---
+  duration_ms: 1.1846
+  type: 'test'
+  ...
+# Subtest: valid specification: experiments/000-vertical-slice-facing.json
+ok 3 - valid specification: experiments/000-vertical-slice-facing.json
+  ---
+  duration_ms: 1.4315
+  type: 'test'
+  ...
+# Subtest: valid specification: experiments/000-vertical-slice.json
+ok 4 - valid specification: experiments/000-vertical-slice.json
+  ---
+  duration_ms: 2.5752
+  type: 'test'
+  ...
+# Subtest: valid specification: experiments/001-tactical-combat.json
+ok 5 - valid specification: experiments/001-tactical-combat.json
+  ---
+  duration_ms: 2.1263
+  type: 'test'
+  ...
+# Subtest: valid specification: experiments/002-control-field.json
+ok 6 - valid specification: experiments/002-control-field.json
+  ---
+  duration_ms: 1.513
+  type: 'test'
+  ...
+# Subtest: rejects unknown top-level field
+ok 7 - rejects unknown top-level field
+  ---
+  duration_ms: 1.0678
+  type: 'test'
+  ...
+# Subtest: rejects negative seed
+ok 8 - rejects negative seed
+  ---
+  duration_ms: 0.681
+  type: 'test'
+  ...
+# Subtest: rejects non-integer tick rate
+ok 9 - rejects non-integer tick rate
+  ---
+  duration_ms: 1.0376
+  type: 'test'
+  ...
+# Subtest: rejects duplicate participant IDs
+ok 10 - rejects duplicate participant IDs
+  ---
+  duration_ms: 3.3617
+  type: 'test'
+  ...
+# Subtest: rejects unknown team reference
+ok 11 - rejects unknown team reference
+  ---
+  duration_ms: 1.6324
+  type: 'test'
+  ...
+# Subtest: rejects duplicate team IDs
+ok 12 - rejects duplicate team IDs
+  ---
+  duration_ms: 1.8209
+  type: 'test'
+  ...
+# Subtest: rejects duplicate module IDs
+ok 13 - rejects duplicate module IDs
+  ---
+  duration_ms: 1.5412
+  type: 'test'
+  ...
+# Subtest: rejects unknown module
+ok 14 - rejects unknown module
+  ---
+  duration_ms: 1.5787
+  type: 'test'
+  ...
+# Subtest: rejects unsupported module version
+ok 15 - rejects unsupported module version
+  ---
+  duration_ms: 0.8253
+  type: 'test'
+  ...
+# Subtest: rejects missing movement dependency
+ok 16 - rejects missing movement dependency
+  ---
+  duration_ms: 0.7616
+  type: 'test'
+  ...
+# Subtest: rejects unknown module configuration field
+ok 17 - rejects unknown module configuration field
+  ---
+  duration_ms: 0.8347
+  type: 'test'
+  ...
+# Subtest: rejects invalid movement speed
+ok 18 - rejects invalid movement speed
+  ---
+  duration_ms: 0.8008
+  type: 'test'
+  ...
+# Subtest: rejects non-finite module values
+ok 19 - rejects non-finite module values
+  ---
+  duration_ms: 0.5819
+  type: 'test'
+  ...
+# Subtest: rejects an impossible reaction window
+ok 20 - rejects an impossible reaction window
+  ---
+  duration_ms: 0.3997
+  type: 'test'
+  ...
+# Subtest: rejects snapshot interval beyond run length
+ok 21 - rejects snapshot interval beyond run length
+  ---
+  duration_ms: 0.5505
+  type: 'test'
+  ...
+# Subtest: rejects omitted termination provider
+ok 22 - rejects omitted termination provider
+  ---
+  duration_ms: 0.9061
+  type: 'test'
+  ...
+# Subtest: rejects multiple termination providers
+ok 23 - rejects multiple termination providers
+  ---
+  duration_ms: 1.6823
+  type: 'test'
+  ...
+# Subtest: objective module rejects unassigned ownership
+ok 24 - objective module rejects unassigned ownership
+  ---
+  duration_ms: 1.1505
+  type: 'test'
+  ...
+# Subtest: schema does not force two teams or combat
+ok 25 - schema does not force two teams or combat
+  ---
+  duration_ms: 1.0927
+  type: 'test'
+  ...
+# Subtest: tactical baseline has one human and five AI controllers
+ok 26 - tactical baseline has one human and five AI controllers
+  ---
+  duration_ms: 2.1106
+  type: 'test'
+  ...
+# Subtest: initial catalog is explicitly specification-only
+ok 27 - initial catalog is explicitly specification-only
+  ---
+  duration_ms: 0.3458
+  type: 'test'
+  ...
+# Subtest: all handoff references and experiments validate
+ok 28 - all handoff references and experiments validate
+  ---
+  duration_ms: 52.5856
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 816.5593
+
+> grid-rift@0.1.0 typecheck
+> tsc --project tsconfig.json --noEmit && tsc --project tsconfig.browser.json --noEmit
+
+
+> grid-rift@0.1.0 check:boundaries
+> node scripts/check-boundaries.mjs
+
+Import boundaries passed: core and agents have deterministic dependency paths.
+
+> grid-rift@0.1.0 build
+> npm run build:core && npm run build:web
+
+
+> grid-rift@0.1.0 build:core
+> tsc --project tsconfig.build.json
+
+
+> grid-rift@0.1.0 build:web
+> node scripts/build-web.mjs
+
+TAP version 13
+# Subtest: deterministic core, contracts, hashing, schema validation and policy utilities are permitted
+ok 1 - deterministic core, contracts, hashing, schema validation and policy utilities are permitted
+  ---
+  duration_ms: 233.7459
+  type: 'test'
+  ...
+# Subtest: direct imports cannot reverse core dependency direction
+ok 2 - direct imports cannot reverse core dependency direction
+  ---
+  duration_ms: 114.1803
+  type: 'test'
+  ...
+# Subtest: re-exports through contracts cannot hide a forbidden transitive import
+ok 3 - re-exports through contracts cannot hide a forbidden transitive import
+  ---
+  duration_ms: 33.0632
+  type: 'test'
+  ...
+# Subtest: policy dependencies cannot transitively reach filesystem, networking or core hashing
+ok 4 - policy dependencies cannot transitively reach filesystem, networking or core hashing
+  ---
+  duration_ms: 141.2364
+  type: 'test'
+  ...
+# Subtest: clock, random, browser, dynamic loading and ambient aliases fail
+ok 5 - clock, random, browser, dynamic loading and ambient aliases fail
+  ---
+  duration_ms: 258.1451
+  type: 'test'
+  ...
+# Subtest: crypto random APIs are rejected while deterministic hashing stays allowed
+ok 6 - crypto random APIs are rejected while deterministic hashing stays allowed
+  ---
+  duration_ms: 231.1608
+  type: 'test'
+  ...
+# Subtest: policies cannot import runner, modules, evaluators or providers
+ok 7 - policies cannot import runner, modules, evaluators or providers
+  ---
+  duration_ms: 39.0551
+  type: 'test'
+  ...
+# Subtest: permitted utility imports are still audited for ambient clock reads
+ok 8 - permitted utility imports are still audited for ambient clock reads
+  ---
+  duration_ms: 45.5584
+  type: 'test'
+  ...
+# Subtest: comments and strings mentioning forbidden APIs are harmless
+ok 9 - comments and strings mentioning forbidden APIs are harmless
+  ---
+  duration_ms: 13.1445
+  type: 'test'
+  ...
+# Subtest: unresolved local imports and dynamic type imports fail
+ok 10 - unresolved local imports and dynamic type imports fail
+  ---
+  duration_ms: 304.3379
+  type: 'test'
+  ...
+# Subtest: real source tree passes the architecture guard
+ok 11 - real source tree passes the architecture guard
+  ---
+  duration_ms: 898.2572
+  type: 'test'
+  ...
+# Subtest: canonical SHA256 sorts keys, preserves arrays, normalizes -0 and rejects invalid JSON
+ok 12 - canonical SHA256 sorts keys, preserves arrays, normalizes -0 and rejects invalid JSON
+  ---
+  duration_ms: 2.4546
+  type: 'test'
+  ...
+# Subtest: PRNG known vectors and independently named seeded streams
+ok 13 - PRNG known vectors and independently named seeded streams
+  ---
+  duration_ms: 1.7913
+  type: 'test'
+  ...
+# Subtest: S0-01 fixed-action runs have equal hashes every tick and journal order
+ok 14 - S0-01 fixed-action runs have equal hashes every tick and journal order
+  ---
+  duration_ms: 280.2271
+  type: 'test'
+  ...
+# Subtest: S0-02 nonzero world snapshot restores exact continuation
+ok 15 - S0-02 nonzero world snapshot restores exact continuation
+  ---
+  duration_ms: 492.0318
+  type: 'test'
+  ...
+# Subtest: observations and snapshots cannot mutate engine state
+ok 16 - observations and snapshots cannot mutate engine state
+  ---
+  duration_ms: 191.4996
+  type: 'test'
+  ...
+# Subtest: S0-05 hidden position/secret/random state does not change permitted observation or receipts
+ok 17 - S0-05 hidden position/secret/random state does not change permitted observation or receipts
+  ---
+  duration_ms: 183.448
+  type: 'test'
+  ...
+# Subtest: hidden evaluator event counts do not leak local event ids
+ok 18 - hidden evaluator event counts do not leak local event ids
+  ---
+  duration_ms: 413.9974
+  type: 'test'
+  ...
+# Subtest: S0-06 admission rejects malformed, forged, nonfinite, oversized, unknown actions and windows
+ok 19 - S0-06 admission rejects malformed, forged, nonfinite, oversized, unknown actions and windows
+  ---
+  duration_ms: 52.6246
+  type: 'test'
+  ...
+# Subtest: S0-06 duplicate, rate and unauthorized execution rejected without stronger actions
+ok 20 - S0-06 duplicate, rate and unauthorized execution rejected without stronger actions
+  ---
+  duration_ms: 85.5451
+  type: 'test'
+  ...
+# Subtest: S0-07 simultaneous arrivals draw regardless of input order; terminal idempotence
+ok 21 - S0-07 simultaneous arrivals draw regardless of input order; terminal idempotence
+  ---
+  duration_ms: 198.1423
+  type: 'test'
+  ...
+# Subtest: registry rejects unimplemented, version, unknown config, duplicates, ownership and cycles
+ok 22 - registry rejects unimplemented, version, unknown config, duplicates, ownership and cycles
+  ---
+  duration_ms: 290.4249
+  type: 'test'
+  ...
+# Subtest: module ordering uses phase, dependency and stable ID independent of registration order
+ok 23 - module ordering uses phase, dependency and stable ID independent of registration order
+  ---
+  duration_ms: 109.3172
+  type: 'test'
+  ...
+# Subtest: invalid module state throws and failed step rolls back random state/events/world
+ok 24 - invalid module state throws and failed step rolls back random state/events/world
+  ---
+  duration_ms: 102.3281
+  type: 'test'
+  ...
+# Subtest: snapshot schema and configuration mismatches fail without mutation
+ok 25 - snapshot schema and configuration mismatches fail without mutation
+  ---
+  duration_ms: 239.6359
+  type: 'test'
+  ...
+# Subtest: core has no two-team or one-body assumption
+ok 26 - core has no two-team or one-body assumption
+  ---
+  duration_ms: 64.1866
+  type: 'test'
+  ...
+# Subtest: numeric and unknown configuration fields fail runtime startup
+ok 27 - numeric and unknown configuration fields fail runtime startup
+  ---
+  duration_ms: 1.3144
+  type: 'test'
+  ...
+# Subtest: authenticated submission rejects spoofing, duplicates, rate limits, malformed and late input
+ok 28 - authenticated submission rejects spoofing, duplicates, rate limits, malformed and late input
+  ---
+  duration_ms: 445.2609
+  type: 'test'
+  ...
+# Subtest: full checkpoint continues pending queue, policy memory and decision schedule
+ok 29 - full checkpoint continues pending queue, policy memory and decision schedule
+  ---
+  duration_ms: 11713.8854
+  type: 'test'
+  ...
+# Subtest: no-policy checkpoint and controller-private rejection receipts restore
+ok 30 - no-policy checkpoint and controller-private rejection receipts restore
+  ---
+  duration_ms: 462.3321
+  type: 'test'
+  ...
+# Subtest: async, failed policies and mutating or throwing observers cannot alter world state
+ok 31 - async, failed policies and mutating or throwing observers cannot alter world state
+  ---
+  duration_ms: 239.5713
+  type: 'test'
+  ...
+# Subtest: active policies produce identical per-tick hashes with a mutating throwing observer
+ok 32 - active policies produce identical per-tick hashes with a mutating throwing observer
+  ---
+  duration_ms: 263.8461
+  type: 'test'
+  ...
+# Subtest: swapping policy identity changes behavior and manifest while retaining body and core configuration
+ok 33 - swapping policy identity changes behavior and manifest while retaining body and core configuration
+  ---
+  duration_ms: 22735.0336
+  type: 'test'
+  ...
+# Subtest: loader rejects unknown fields, policies, versions and specification-only modules
+ok 34 - loader rejects unknown fields, policies, versions and specification-only modules
+  ---
+  duration_ms: 1326.7646
+  type: 'test'
+  ...
+# Subtest: recorded admitted-action replay matches every hash and event; first corruption fails
+ok 35 - recorded admitted-action replay matches every hash and event; first corruption fails
+  ---
+  duration_ms: 19453.5013
+  type: 'test'
+  ...
+# Subtest: the same attack click chooses an entity lock or ground order from what was hit
+ok 36 - the same attack click chooses an entity lock or ground order from what was hit
+  ---
+  duration_ms: 4.2827
+  type: 'test'
+  ...
+# Subtest: ground attack releases a nearby target that moves away; explicit enemy click keeps pursuing
+ok 37 - ground attack releases a nearby target that moves away; explicit enemy click keeps pursuing
+  ---
+  duration_ms: 462.5194
+  type: 'test'
+  ...
+# Subtest: ground attack finishes at its point without enemies; idle autoattack never becomes an enemy lock
+ok 38 - ground attack finishes at its point without enemies; idle autoattack never becomes an enemy lock
+  ---
+  duration_ms: 528.0657
+  type: 'test'
+  ...
+# Subtest: rendered beam endpoints match the shot in all quadrants, without tilting toward the ground
+ok 39 - rendered beam endpoints match the shot in all quadrants, without tilting toward the ground
+  ---
+  duration_ms: 8.529
+  type: 'test'
+  ...
+# Subtest: basic hits use raised beams; pulse hits use local impact instead of an imaginary return beam
+ok 40 - basic hits use raised beams; pulse hits use local impact instead of an imaginary return beam
+  ---
+  duration_ms: 3.1443
+  type: 'test'
+  ...
+# Subtest: zero-length guides are hidden and never produce invalid rotation values
+ok 41 - zero-length guides are hidden and never produce invalid rotation values
+  ---
+  duration_ms: 0.6771
+  type: 'test'
+  ...
+# Subtest: one target selection approaches visible enemy, then repeats without reissuing attacks
+ok 42 - one target selection approaches visible enemy, then repeats without reissuing attacks
+  ---
+  duration_ms: 579.6194
+  type: 'test'
+  ...
+# Subtest: lost target cancels pursuit without following hidden position; attack move resumes area order
+ok 43 - lost target cancels pursuit without following hidden position; attack move resumes area order
+  ---
+  duration_ms: 536.2996
+  type: 'test'
+  ...
+# Subtest: nearest acquisition is deterministic; moving retreat and hold suppress acquisition
+ok 44 - nearest acquisition is deterministic; moving retreat and hold suppress acquisition
+  ---
+  duration_ms: 409.5045
+  type: 'test'
+  ...
+# Subtest: attack move acquires nearby visible enemy and idle standing order does not seek distant enemies
+ok 45 - attack move acquires nearby visible enemy and idle standing order does not seek distant enemies
+  ---
+  duration_ms: 188.8374
+  type: 'test'
+  ...
+# Subtest: integrated single attack selection chases, attacks, and stop cancels the standing order
+ok 46 - integrated single attack selection chases, attacks, and stop cancels the standing order
+  ---
+  duration_ms: 6006.4522
+  type: 'test'
+  ...
+# Subtest: new controls identity is recorded; unsampled attack-move/stop validation and pause discard are safe
+ok 47 - new controls identity is recorded; unsampled attack-move/stop validation and pause discard are safe
+  ---
+  duration_ms: 176.9196
+  type: 'test'
+  ...
+# Subtest: stationary Runner faces the attack target and tracks it around all sides without mutating observations
+ok 48 - stationary Runner faces the attack target and tracks it around all sides without mutating observations
+  ---
+  duration_ms: 643.7118
+  type: 'test'
+  ...
+# Subtest: movement and dash keep their facing, while confirmed pulse faces its aim instead of old attack target
+ok 49 - movement and dash keep their facing, while confirmed pulse faces its aim instead of old attack target
+  ---
+  duration_ms: 234.798
+  type: 'test'
+  ...
+# Subtest: hidden, dead, coincident and cleared targets never provide an invalid or stale aim
+ok 50 - hidden, dead, coincident and cleared targets never provide an invalid or stale aim
+  ---
+  duration_ms: 478.175
+  type: 'test'
+  ...
+# Subtest: both players turn on the actual attack tick, including AI seen without private target data
+ok 51 - both players turn on the actual attack tick, including AI seen without private target data
+  ---
+  duration_ms: 402.3318
+  type: 'test'
+  ...
+# Subtest: actual utility AI shoots facing its victim and the native state replays exactly
+ok 52 - actual utility AI shoots facing its victim and the native state replays exactly
+  ---
+  duration_ms: 5572.0521
+  type: 'test'
+  ...
+# Subtest: AI pulse faces its aim through windup and launch; subsequent movement restores travel facing
+ok 53 - AI pulse faces its aim through windup and launch; subsequent movement restores travel facing
+  ---
+  duration_ms: 645.7179
+  type: 'test'
+  ...
+# Subtest: an unseen target does not steer the shooter or leak its hidden position through facing
+ok 54 - an unseen target does not steer the shooter or leak its hidden position through facing
+  ---
+  duration_ms: 514.2482
+  type: 'test'
+  ...
+# Subtest: an actual shot during dash faces the hit, then travel facing resumes between shots
+ok 55 - an actual shot during dash faces the hit, then travel facing resumes between shots
+  ---
+  duration_ms: 227.112
+  type: 'test'
+  ...
+# Subtest: utility contests public relay with authenticated proposal timing and sequence
+ok 56 - utility contests public relay with authenticated proposal timing and sequence
+  ---
+  duration_ms: 16.2857
+  type: 'test'
+  ...
+# Subtest: identical permitted observations produce identical decisions regardless of hidden state
+ok 57 - identical permitted observations produce identical decisions regardless of hidden state
+  ---
+  duration_ms: 4.1481
+  type: 'test'
+  ...
+# Subtest: visible targets are pulsed only off cooldown, otherwise attacked without intent spam
+ok 58 - visible targets are pulsed only off cooldown, otherwise attacked without intent spam
+  ---
+  duration_ms: 1.9428
+  type: 'test'
+  ...
+# Subtest: retreat commits through partial recovery then returns to relay
+ok 59 - retreat commits through partial recovery then returns to relay
+  ---
+  duration_ms: 0.6512
+  type: 'test'
+  ...
+# Subtest: dash disengages with visible threat, cooldown prevents dash spam
+ok 60 - dash disengages with visible threat, cooldown prevents dash spam
+  ---
+  duration_ms: 0.4249
+  type: 'test'
+  ...
+# Subtest: visible pulse windup triggers perpendicular evasive movement
+ok 61 - visible pulse windup triggers perpendicular evasive movement
+  ---
+  duration_ms: 0.42
+  type: 'test'
+  ...
+# Subtest: no stale invisible pursuit, dead units and denied action budgets propose nothing
+ok 62 - no stale invisible pursuit, dead units and denied action budgets propose nothing
+  ---
+  duration_ms: 0.5671
+  type: 'test'
+  ...
+# Subtest: synchronous result deadline is independent from delayed action execution
+ok 63 - synchronous result deadline is independent from delayed action execution
+  ---
+  duration_ms: 0.2651
+  type: 'test'
+  ...
+# Subtest: equidistant target ties use deterministic code unit ordering
+ok 64 - equidistant target ties use deterministic code unit ordering
+  ---
+  duration_ms: 1.3678
+  type: 'test'
+  ...
+# Subtest: relay rotation uses ready dash; at the relay policy holds position
+ok 65 - relay rotation uses ready dash; at the relay policy holds position
+  ---
+  duration_ms: 0.8344
+  type: 'test'
+  ...
+# Subtest: fixed authored map and strict configuration
+ok 66 - fixed authored map and strict configuration
+  ---
+  duration_ms: 1016.8284
+  type: 'test'
+  ...
+# Subtest: navigation takes a legal deterministic route around inflated ridge
+ok 67 - navigation takes a legal deterministic route around inflated ridge
+  ---
+  duration_ms: 3264.3205
+  type: 'test'
+  ...
+# Subtest: LOS hides enemy units, attacks and enemy events
+ok 68 - LOS hides enemy units, attacks and enemy events
+  ---
+  duration_ms: 227.4713
+  type: 'test'
+  ...
+# Subtest: basic attacks resolve instantly and obey interval with simultaneous damage
+ok 69 - basic attacks resolve instantly and obey interval with simultaneous damage
+  ---
+  duration_ms: 613.4509
+  type: 'test'
+  ...
+# Subtest: pulse windup and cooldown are authoritative, projectile hits at swept geometry
+ok 70 - pulse windup and cooldown are authoritative, projectile hits at swept geometry
+  ---
+  duration_ms: 328.1711
+  type: 'test'
+  ...
+# Subtest: pulse stops at cover and does not leak a hidden projectile
+ok 71 - pulse stops at cover and does not leak a hidden projectile
+  ---
+  duration_ms: 268.5585
+  type: 'test'
+  ...
+# Subtest: dash travels six units over four ticks and stops before cover
+ok 72 - dash travels six units over four ticks and stops before cover
+  ---
+  duration_ms: 439.5596
+  type: 'test'
+  ...
+# Subtest: dead unit cannot move or cast; respawn restores spawn and full health
+ok 73 - dead unit cannot move or cast; respawn restores spawn and full health
+  ---
+  duration_ms: 506.8682
+  type: 'test'
+  ...
+# Subtest: relay requires continuous presence, resets on contest, retains ownership without scoring
+ok 74 - relay requires continuous presence, resets on contest, retains ownership without scoring
+  ---
+  duration_ms: 703.3761
+  type: 'test'
+  ...
+# Subtest: score win and timeout tiebreak finish explicitly
+ok 75 - score win and timeout tiebreak finish explicitly
+  ---
+  duration_ms: 650.9914
+  type: 'test'
+  ...
+# Subtest: snapshot continuation reproduces moving projectile and dash exactly
+ok 76 - snapshot continuation reproduces moving projectile and dash exactly
+  ---
+  duration_ms: 889.0429
+  type: 'test'
+  ...
+# Subtest: spawn recovery heals only living units within the marked radius
+ok 77 - spawn recovery heals only living units within the marked radius
+  ---
+  duration_ms: 108.0217
+  type: 'test'
+  ...
+# Subtest: visible enemies reveal tells and health, while private plans and cooldowns stay hidden
+ok 78 - visible enemies reveal tells and health, while private plans and cooldowns stay hidden
+  ---
+  duration_ms: 422.3916
+  type: 'test'
+  ...
+# Subtest: attack intent stops a running approach in range and a later retreat cancels it
+ok 79 - attack intent stops a running approach in range and a later retreat cancels it
+  ---
+  duration_ms: 270.1162
+  type: 'test'
+  ...
+# Subtest: browser SHA256 adapter produces identical native hash bytes
+ok 80 - browser SHA256 adapter produces identical native hash bytes
+  ---
+  duration_ms: 4.5341
+  type: 'test'
+  ...
+# Subtest: actual browser bundle and Node simulation agree; copied reduced-effects view has no effect
+ok 81 - actual browser bundle and Node simulation agree; copied reduced-effects view has no effect
+  ---
+  duration_ms: 14175.9773
+  type: 'test'
+  ...
+# Subtest: session pause input discard, readable cooldown rejection, restart and action replay
+ok 82 - session pause input discard, readable cooldown rejection, restart and action replay
+  ---
+  duration_ms: 5948.1305
+  type: 'test'
+  ...
+# Subtest: idle human versus actual AI completes relay encounter without privileged input
+ok 83 - idle human versus actual AI completes relay encounter without privileged input
+  ---
+  duration_ms: 30751.965
+  type: 'test'
+  ...
+# Subtest: visual sight matches authoritative enemy visibility for open ground, range and cover
+ok 84 - visual sight matches authoritative enemy visibility for open ground, range and cover
+  ---
+  duration_ms: 271.9862
+  type: 'test'
+  ...
+# Subtest: sight contour follows player movement, cover shadows and removal of a living sight source
+ok 85 - sight contour follows player movement, cover shadows and removal of a living sight source
+  ---
+  duration_ms: 722.131
+  type: 'test'
+  ...
+# Subtest: sight is derived without enemy data, leaves its inputs unchanged, and supports multiple permitted sources
+ok 86 - sight is derived without enemy data, leaves its inputs unchanged, and supports multiple permitted sources
+  ---
+  duration_ms: 255.9302
+  type: 'test'
+  ...
+# Subtest: roof reveal uses visible exterior faces even though the building centre blocks point sight
+ok 87 - roof reveal uses visible exterior faces even though the building centre blocks point sight
+  ---
+  duration_ms: 297.3138
+  type: 'test'
+  ...
+# Subtest: a building fully behind other cover remains fogged despite being within radius
+ok 88 - a building fully behind other cover remains fogged despite being within radius
+  ---
+  duration_ms: 187.184
+  type: 'test'
+  ...
+# Subtest: high resolution contours terminate at cover and range without depending on raster pixel size
+ok 89 - high resolution contours terminate at cover and range without depending on raster pixel size
+  ---
+  duration_ms: 179.6611
+  type: 'test'
+  ...
+# Subtest: four actors, strict authored variants, separate registry and startup grants
+ok 90 - four actors, strict authored variants, separate registry and startup grants
+  ---
+  duration_ms: 3835.5086
+  type: 'test'
+  ...
+# Subtest: order delivers after two ticks; replacement suppresses older delivery; cancel tombstones
+ok 91 - order delivers after two ticks; replacement suppresses older delivery; cancel tombstones
+  ---
+  duration_ms: 357.3049
+  type: 'test'
+  ...
+# Subtest: expiry is exclusive and does not revive old intention
+ok 92 - expiry is exclusive and does not revive old intention
+  ---
+  duration_ms: 487.3531
+  type: 'test'
+  ...
+# Subtest: malformed fields, cross-owner, actor forgery, stale generation and blocked target reject
+ok 93 - malformed fields, cross-owner, actor forgery, stale generation and blocked target reject
+  ---
+  duration_ms: 312.7817
+  type: 'test'
+  ...
+# Subtest: execution rechecks living authority, death increments only once and clears channels
+ok 94 - execution rechecks living authority, death increments only once and clears channels
+  ---
+  duration_ms: 255.0272
+  type: 'test'
+  ...
+# Subtest: same-tick higher revision and cancellation tie emit explicit superseded events
+ok 95 - same-tick higher revision and cancellation tie emit explicit superseded events
+  ---
+  duration_ms: 341.529
+  type: 'test'
+  ...
+# Subtest: voluntary transfer clears old generation and dominates same-tick orders
+ok 96 - voluntary transfer clears old generation and dominates same-tick orders
+  ---
+  duration_ms: 573.5752
+  type: 'test'
+  ...
+# Subtest: unit and leader reports preserve original capture time, are delayed and private
+ok 97 - unit and leader reports preserve original capture time, are delayed and private
+  ---
+  duration_ms: 704.9286
+  type: 'test'
+  ...
+# Subtest: hidden raider data leaves command projection and rejection unchanged
+ok 98 - hidden raider data leaves command projection and rejection unchanged
+  ---
+  duration_ms: 496.2627
+  type: 'test'
+  ...
+# Subtest: full nonzero checkpoint retains queued reactions, reports, memory and continuation
+ok 99 - full nonzero checkpoint retains queued reactions, reports, memory and continuation
+  ---
+  duration_ms: 16486.8869
+  type: 'test'
+  ...
+# Subtest: crossing kills latch through respawn, friendly loss and simultaneous finish draw
+ok 100 - crossing kills latch through respawn, friendly loss and simultaneous finish draw
+  ---
+  duration_ms: 1093.6982
+  type: 'test'
+  ...
+# Subtest: B-05 rebuilding availability is private, checkpointed and clears after respawn
+ok 101 - B-05 rebuilding availability is private, checkpointed and clears after respawn
+  ---
+  duration_ms: 589.4794
+  type: 'test'
+  ...
+# Subtest: attack picking rejects hero and allied bodies while ally picking keeps them separate
+ok 102 - attack picking rejects hero and allied bodies while ally picking keeps them separate
+  ---
+  duration_ms: 2.3079
+  type: 'test'
+  ...
+# Subtest: a delayed report cannot create a live selectable body outside the permitted entities
+ok 103 - a delayed report cannot create a live selectable body outside the permitted entities
+  ---
+  duration_ms: 0.5182
+  type: 'test'
+  ...
+# Subtest: A-03 highest same-tick revision wins; cancellation wins only an equal revision
+ok 104 - A-03 highest same-tick revision wins; cancellation wins only an equal revision
+  ---
+  duration_ms: 3.8334
+  type: 'test'
+  ...
+# Subtest: A-03 bounded order wire examples accept defend, secure, follow and cancellation
+ok 105 - A-03 bounded order wire examples accept defend, secure, follow and cancellation
+  ---
+  duration_ms: 10.8482
+  type: 'test'
+  ...
+# Subtest: A-04 authenticated authority, stale/reassigned generations and expiry are explicit
+ok 106 - A-04 authenticated authority, stale/reassigned generations and expiry are explicit
+  ---
+  duration_ms: 9.1518
+  type: 'test'
+  ...
+# Subtest: A-04 malformed, oversized, forged issuer and invalid target wire shapes fail
+ok 107 - A-04 malformed, oversized, forged issuer and invalid target wire shapes fail
+  ---
+  duration_ms: 2.3303
+  type: 'test'
+  ...
+# Subtest: B-01/03 direct hero input stays independent of an owned unit intention
+ok 108 - B-01/03 direct hero input stays independent of an owned unit intention
+  ---
+  duration_ms: 3811.852
+  type: 'test'
+  ...
+# Subtest: B-04 autonomous action replay verifies every tick/event and detects corruption and wrong source
+ok 109 - B-04 autonomous action replay verifies every tick/event and detects corruption and wrong source
+  ---
+  duration_ms: 25502.1647
+  type: 'test'
+  ...
+# Subtest: B-04 policy rerun, nonzero checkpoint and mutating observer reproduce unit memory and world
+ok 110 - B-04 policy rerun, nonzero checkpoint and mutating observer reproduce unit memory and world
+  ---
+  duration_ms: 7454.1401
+  type: 'test'
+  ...
+# Subtest: B-04 identical body and budget survive policy replacement; unknown identities fail clearly
+ok 111 - B-04 identical body and budget survive policy replacement; unknown identities fail clearly
+  ---
+  duration_ms: 1118.7103
+  type: 'test'
+  ...
+# Subtest: B-06 actual browser simulation bundle and Node agree for orders and hero control
+ok 112 - B-06 actual browser simulation bundle and Node agree for orders and hero control
+  ---
+  duration_ms: 7308.9856
+  type: 'test'
+  ...
+# Subtest: separate policies keep body/config parity and explicit delayed two-action budget
+ok 113 - separate policies keep body/config parity and explicit delayed two-action budget
+  ---
+  duration_ms: 529.6818
+  type: 'test'
+  ...
+# Subtest: unchanged intention reacts differently to visible threat direction and health
+ok 114 - unchanged intention reacts differently to visible threat direction and health
+  ---
+  duration_ms: 981.0649
+  type: 'test'
+  ...
+# Subtest: cautious risk threshold and retreat hysteresis use public own health
+ok 115 - cautious risk threshold and retreat hysteresis use public own health
+  ---
+  duration_ms: 674.3924
+  type: 'test'
+  ...
+# Subtest: defend leash does not chase a visible foe far beyond the ordered perimeter
+ok 116 - defend leash does not chase a visible foe far beyond the ordered perimeter
+  ---
+  duration_ms: 360.2214
+  type: 'test'
+  ...
+# Subtest: cancel, pending replacement, expiry and generation revocation stop retained attacks and paths
+ok 117 - cancel, pending replacement, expiry and generation revocation stop retained attacks and paths
+  ---
+  duration_ms: 821.2695
+  type: 'test'
+  ...
+# Subtest: follow accepts only fresh visible commander or delayed own-commander telemetry
+ok 118 - follow accepts only fresh visible commander or delayed own-commander telemetry
+  ---
+  duration_ms: 272.6552
+  type: 'test'
+  ...
+# Subtest: missing visible enemies preserve original memory timestamps without hidden pursuit
+ok 119 - missing visible enemies preserve original memory timestamps without hidden pursuit
+  ---
+  duration_ms: 203.7563
+  type: 'test'
+  ...
+# Subtest: blocked goal choice stays legal and simulation takes a different route under unchanged legal intention
+ok 120 - blocked goal choice stays legal and simulation takes a different route under unchanged legal intention
+  ---
+  duration_ms: 1378.5908
+  type: 'test'
+  ...
+# Subtest: identical permitted input determines policy results, including bounded serial memory
+ok 121 - identical permitted input determines policy results, including bounded serial memory
+  ---
+  duration_ms: 286.4904
+  type: 'test'
+  ...
+# Subtest: steady baseline changes tactical choice with identical visible body capabilities
+ok 122 - steady baseline changes tactical choice with identical visible body capabilities
+  ---
+  duration_ms: 506.827
+  type: 'test'
+  ...
+1..122
+# tests 122
+# suites 0
+# pass 122
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 59840.978

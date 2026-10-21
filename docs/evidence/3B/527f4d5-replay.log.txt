@@ -1,0 +1,9 @@
+
+> grid-rift@0.1.0 replay:autonomy
+> npm run build:core && node scripts/replay-encounter.mjs runs/independent/repair-complete.json
+
+
+> grid-rift@0.1.0 build:core
+> tsc --project tsconfig.build.json
+
+{"ticks":1800,"finalHash":"904a887af7d28cdba8ada1bc39fc3a4e15a28c0908d488a84c80b4e462035ae9","terminal":{"kind":"draw","reason":"timeout","scores":{"alpha":0,"beta":0},"tick":1800}}

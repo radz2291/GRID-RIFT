@@ -1,6 +1,6 @@
 # GRID-RIFT
 
-Current development: autonomous crossing candidate on `design/stage3a-autonomous-warfare`. Run `npm ci` then `npm run dev`; the browser defaults to the new skirmish. The approved Stage 1 relay duel remains at `http://127.0.0.1:4173/?scenario=duel`. See [autonomous controls and scope](docs/STAGE3B-IMPLEMENTATION.md) and [live status](docs/STATUS.md) for verification and owner-review gates.
+Current development: autonomous crossing, independently verified and ready for owner experience review, on `design/stage3a-autonomous-warfare`. Run `npm ci` then `npm run dev`; the browser defaults to the new skirmish. The approved Stage 1 relay duel remains at `http://127.0.0.1:4173/?scenario=duel`. See [autonomous controls and scope](docs/STAGE3B-IMPLEMENTATION.md) and [live status](docs/STATUS.md) for verification and owner-review gates.
 
 A hero-led autonomous warfare simulation: fight as your hero, lead autonomous forces through high-level intent, and shape an outdoor strategic battlefield. This is the approved forward direction; the current development build adds the autonomous crossing skirmish and retains the approved Stage 1 relay duel.
 
@@ -44,11 +44,11 @@ See [Stage 0 verification](docs/STAGE0-VERIFICATION.md) for acceptance evidence,
 
 Read [CODEX_START.md](CODEX_START.md), [AGENTS.md](AGENTS.md), [current status](docs/STATUS.md), [current design](docs/CURRENT-DESIGN.md) and [current handoff](CURRENT_CODEX_HANDOFF.md). The [full development cycle](docs/DEVELOPMENT-CYCLE.md) gives one local manager responsibility through independent verification, repairs, playable review and delivery.
 
-Stage 3A contracts passed independent review. The integrated Stage 3B hero plus autonomous ally is undergoing technical and browser verification before owner experience review. Future strategic construction, resources, core outcomes and independent hero peers are specified in the [roadmap](docs/10-DEVELOPMENT-ROADMAP.md), not implemented yet. The legacy two-lane experiment and noncombat architecture test remain preserved.
+Stage 3A contracts passed independent review. Stage 3B passed independent technical/browser verification (150 regression tests plus four independent probes); owner experience review is now the required next gate. Future strategic construction, resources, core outcomes and independent hero peers are specified in the [roadmap](docs/10-DEVELOPMENT-ROADMAP.md), not implemented yet. The legacy two-lane experiment and noncombat architecture test remain preserved.
 
 ## Check the handoff
 
-Use a supported Node.js runtime meeting the minimum version of 22.12, and npm. The verified run used Node.js 22.23.3. Dependency versions and integrity data are recorded in `package-lock.json`.
+Use a supported Node.js runtime meeting the minimum version of 22.12, and npm. Current autonomous verification used Node.js 22.22.3 and npm 10.9.8. Dependency versions and integrity data are recorded in `package-lock.json`.
 
 ```sh
 npm ci
