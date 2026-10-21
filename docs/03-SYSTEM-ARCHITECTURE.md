@@ -4,7 +4,7 @@
 
 Use a modular TypeScript codebase. Run the authoritative simulation without browser dependencies. A browser client may use Three.js to draw permitted snapshots. Keep this a single repository and initially a single local application; do not introduce microservices.
 
-Suggested implementation layout, to be created by Codex:
+Current implementation follows this general separation (inspect source for exact contents):
 
 ```text
 src/core/              state, ticks, ordered commands, module scheduler
@@ -17,7 +17,7 @@ src/adapters/headless/ CLI execution and run export
 src/evaluation/        read-only metrics and paired-run reports
 ```
 
-Existing `contracts/` is the cross-boundary authority. These directories are a suggestion, not proof that code exists.
+Existing `contracts/` is the cross-boundary authority. The runtime exists. Individual future modules remain proposals until registered and tested; see `STATUS.md`.
 
 ## Ownership and dependency direction
 
@@ -60,3 +60,11 @@ The runner can accelerate headless local policies by advancing ticks without wai
 5. Change the visual palette and camera; permitted observations and world results do not change.
 
 Changing from planar to true physics-based 3D, changing the meaning of time, or introducing simultaneous control of many bodies may expose genuine contract gaps. Use a versioned migration, not a claim that generic JSON makes every future design automatically supported.
+
+## Autonomous command extension · v0.3
+
+Body state belongs to modules; affiliation and command ownership are separate data; policy assignment/budgets belong to the runner; policy memory is checkpointed. An authenticated commander issues a versioned order action for owned units. A subordinate policy consumes authorized intent context and emits ordinary actions for its own body. Do not give the human controller a hidden second low-level action stream for that unit.
+
+Current seams: `ControllerSpec.actors` in `src/core/types.ts`, action/observation/memory envelopes in `contracts/agent-interface.ts`, admission in `src/core/engine.ts`, policy scheduling/checkpointing in `src/runner/runner.ts`, tactical registration in `src/game/session.ts`. These are inspection points, not proof that force ownership is implemented. Stage 3A must prove how many independent policies can be scheduled and how orders are projected without weakening actor authorization.
+
+Use separate optional modules for orders/ownership, resources, construction, pressure and terminal core rules. Placement changes authoritative collision, navigation and sight atomically at a defined tick. Validate cost and space together to prevent double spending. A teammate affiliation must never authorize an order. Death, respawn, expiry, revocation and reassignment need explicit stale-order rules. Extend core only when a negative test demonstrates an actual seam gap; record compatibility before implementing the extension.

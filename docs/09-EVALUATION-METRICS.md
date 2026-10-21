@@ -45,3 +45,17 @@ Test for hidden-state leaks, stronger-than-declared actions, map/spawn bias, rew
 ## Acceptance
 
 Metrics reproduce from the same finalized event stream. Disabling evaluation leaves simulation hashes unchanged. Unknown or unavailable measures remain null with a reason, not misleading zeros. Reports include experiment version/hash, policy versions, runtime conditions, run count, and interpretation limits.
+
+## Autonomous-warfare measures · proposed until instrumented
+
+| Measure | Operational comparison |
+| --- | --- |
+| Intent progress | Goal-specific progress/completion and failure reason under matched threat conditions |
+| Adaptation | Time and outcome after a delivered visible threat or blocked-route cue versus frozen/no-replan baseline |
+| Survival trade-off | Unit loss and objective opportunity cost; retreat alone is neither success nor failure |
+| Delegation cost | Commander order/revision count and time spent issuing them, separated from combat input |
+| Communication | Delivered information, latency, stale reports and resulting decisions under configured delay |
+| Investment | Energy spent, infrastructure survival, changed route/pressure and opportunity forgone |
+| Coordination | Response to permitted peer messages, with no-message comparison and ownership violations checked |
+
+Use a predeclared seed list, side swaps and scenario variations; hold body statistics and budgets fixed for policy comparisons. Preserve incomplete and failed runs. Success is task-bounded, not a general intelligence score. Instrumentation must reproduce from journals and leave simulation hashes unchanged. Owner playtests judge readability, trust and meaningful choices separately from automated policy outcomes.

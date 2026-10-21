@@ -1,6 +1,6 @@
 # GRID-RIFT
 
-An outdoor science-fiction tactical simulation with replaceable rules, readable combat, and repeatable experiments.
+A hero-led autonomous warfare simulation: fight as your hero, lead autonomous forces through high-level intent, and shape an outdoor strategic battlefield. This is the approved forward direction; the current runnable build remains the Stage 1 relay duel.
 
 **Stage 1 complete and owner-approved · 21 October 2026.**
 
@@ -40,9 +40,9 @@ See [Stage 0 verification](docs/STAGE0-VERIFICATION.md) for acceptance evidence,
 
 ## Start here
 
-Read [CODEX_START.md](CODEX_START.md), then [AGENTS.md](AGENTS.md) and [current status](docs/STATUS.md). The original startup brief is retained as historical context. Stage 1 is owner-approved; Stage 2 is the next milestone and has not started. The approval is recorded in [Stage 1 verification](docs/STAGE1-VERIFICATION.md).
+Read [CODEX_START.md](CODEX_START.md), [AGENTS.md](AGENTS.md), [current status](docs/STATUS.md), [current design](docs/CURRENT-DESIGN.md) and [current handoff](CURRENT_CODEX_HANDOFF.md). The [full development cycle](docs/DEVELOPMENT-CYCLE.md) gives one local manager responsibility through independent verification, repairs, playable review and delivery.
 
-The first playable delivery is a small encounter with one human-controlled unit and one opponent. The later baseline is a 3v3, two-lane battlefield. A third specification removes lanes, towers, combat, and progression to test whether the architecture genuinely supports different rules.
+Next: reconcile any Stage 2 work, complete Stage 3A autonomous-command contracts, then build Stage 3B's hero plus autonomous ally. Future strategic construction, resources, core outcomes and independent hero peers are specified in the [roadmap](docs/10-DEVELOPMENT-ROADMAP.md), not implemented yet. The legacy two-lane experiment and noncombat architecture test remain preserved.
 
 ## Check the handoff
 

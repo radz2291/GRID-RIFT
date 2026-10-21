@@ -2,7 +2,7 @@
 
 **Stage 1 complete and owner-approved on 21 October 2026.** Approved playable source: `c84e86c84f114bd45c9e8168f83af5790f579675`, experiment 0.4.0. The owner stated: "Good, stage one is approved." See [approval and verification](STAGE1-VERIFICATION.md#owner-approval--21-october-2026).
 
-Stage 0 is retained. Stage 1 includes the reviewed controls, HUD/pause menus, shared native human/AI facing, corrected shots, fog of war and refined roof/edge treatment. Latest combined suite: 117 passing tests. Final art, balance refinement, accessibility and wider hardware coverage remain later work; Stage 2 has not started.
+Stage 0 is retained. Stage 1 includes the reviewed controls, HUD/pause menus, shared native human/AI facing, corrected shots, fog of war and refined roof/edge treatment. Historical combined suite: 117 passing tests. Final art, balance refinement, accessibility and wider hardware coverage remain later work. A separate Stage 2 implementation is unverified on the inspected remote refs; this is not a claim about unseen local work.
 
 | Area | Status |
 | --- | --- |
@@ -28,11 +28,20 @@ Stage 0 is retained. Stage 1 includes the reviewed controls, HUD/pause menus, sh
 
 See [Stage 1 verification](STAGE1-VERIFICATION.md) for current commands, acceptance evidence and limitations. [Stage 0 verification](STAGE0-VERIFICATION.md) and the [original handoff verification](VERIFICATION.md) remain historical records.
 
-## Next milestone
+## Current forward state · 21 October 2026
 
-Stage 2: develop the two-lane 3v3 baseline incrementally, beginning with teams/population, then waves/towers/core and relay trade-offs. Preserve the accepted Stage 1 controls, readability and runtime guarantees. See [roadmap](10-DEVELOPMENT-ROADMAP.md#stage-2--decision-depth).
+Documentation alignment v0.3 follows baseline handoff `751d23b` and owner approval record `8a058ee`. Full exact lineage and actual alignment checks are in [documentation verification](DOCUMENTATION-ALIGNMENT-VERIFICATION.md). `CURRENT-DESIGN.md` is the authoritative forward specification; [decision 0004](decisions/0004-autonomous-warfare-full-cycle.md) records the owner amendment. No gameplay code or published experiment configuration is changed by the alignment.
 
-The Stage 1 experience-review gate is closed. This approval record does not implement or start Stage 2. The battlefield remains provisional rather than final production art.
+| Area | Current evidence state |
+| --- | --- |
+| Hero-led autonomous warfare direction and structured construction | Owner-approved intent; implementation pending |
+| Stage 2 two-lane implementation | Not found on inspected remote refs; local/new remote reconciliation required |
+| 3A autonomous scenario/contracts | Authorized next; design/contract deliverables not yet completed |
+| 3B–3F autonomous playable through local release | Roadmap specified; not implemented or verified |
+| 3X noncombat architecture experiment | Retained specification; runtime proof pending |
+| Full-cycle manager workflow | Defined; independent stage verification not yet performed |
+
+Next authorized action: reconcile any later work, complete 3A through independent technical verification, then implement and repair 3B through a reviewable playable. Stop at 3B owner experience review before economy/hero expansion. Follow [current handoff](../CURRENT_CODEX_HANDOFF.md) and [roadmap](10-DEVELOPMENT-ROADMAP.md). Do not restart accepted Stage 0/1 or claim a gate PASS from this documentation update.
 
 ## Open implementation choices
 

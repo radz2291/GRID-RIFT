@@ -2,7 +2,7 @@
 
 ## Start with an honest baseline
 
-First implement an idle policy and a transparent local policy that selects from scored options. A scored-options policy might compare retreat, contest, engage, and reposition using only its observation. This is ordinary scripted decision logic, not a learned mind. It is useful both as an opponent and as a reference for later policies.
+Existing idle, scored-step and tactical policies provide the starting baselines. Retain a transparent local policy that selects from scored options. A scored-options policy might compare retreat, contest, engage, and reposition using only its observation. This is ordinary scripted decision logic, not a learned mind. It is useful both as an opponent and as a reference for later policies.
 
 Do not make training or a language model a prerequisite for playable interaction. A competent local baseline reveals whether the world supports meaningful decisions before more costly intelligence is added.
 
@@ -44,4 +44,12 @@ A planning or language-model adapter may propose high-level plans at a slower ca
 
 Compare policies on paired seeds and switched starting sides. Hold the body, mechanics, information, and declared budgets fixed where possible. Report training and evaluation scenario separation. State whether adaptation occurs inside one match, across matches, or only during offline training.
 
-The initial package promises replaceable interfaces and tests to build, not an already intelligent or human-equivalent agent.
+Existing tests demonstrate scoped runtime guarantees; autonomous command is the next experiment, not an already implemented or human-equivalent intelligence.
+
+## Intent-driven subordinate policies
+
+Separate strategic intent, goal selection, tactical planning and reactive execution. A utility policy with explicit commitment/memory is an adequate initial implementation; do not mandate utility + planner + behaviour tree when a smaller policy demonstrates the required decisions. Preserve replaceability.
+
+An order may request defend, secure or follow with a target, risk constraint, priority and lifetime. Unit decisions must depend on observations/capabilities, not fixed scout/guard/capture scripts. Explain visible state through bounded status/reason codes: holding, repositioning, threat observed, withdrawing, blocked, complete or expired. Reports use only permitted information and declared message timing.
+
+Test the same intention with a changed visible threat, blocked route and loss of contact. Compare a second policy on identical body statistics and budgets. A retreat is not automatically a failure: assess goal progress, survival cost, available information and alternatives. Never grade obedience to an imagined click sequence as intelligence.

@@ -52,3 +52,9 @@ If a true no-team ownership model is needed later, update the team/affiliation b
 ## Recovery
 
 On incompatible data, stop with a useful error rather than guessing. On a branch conflict, inspect the new head before retrying. On failed tests, report the failure and preserve evidence. Never force-push or delete historical runs merely to make the status look clean.
+
+## Product amendments and full-cycle ownership
+
+An owner direction change updates `CURRENT-DESIGN.md`, affected architecture/gameplay/evaluation documents, roadmap, handoff and live status together. Append a decision record; preserve historical evidence and experiment identities. A change to forward intent does not prove an implementation milestone complete.
+
+The stage manager owns candidate → independent challenge → repair → re-verification → product walkthrough → evidence/status → push. Preserve failed candidate evidence and findings; do not interrupt routine repairs for owner permission. Cross only the entry gates in [the roadmap](10-DEVELOPMENT-ROADMAP.md); scope changes and actual owner experience judgments remain explicit.

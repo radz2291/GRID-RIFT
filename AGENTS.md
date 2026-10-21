@@ -1,6 +1,6 @@
 # Instructions for development agents
 
-These instructions apply throughout GRID-RIFT. Read `CODEX_START.md` before planning work. This is a handoff, not an implemented engine; do not report proposed features as working.
+These instructions apply throughout GRID-RIFT. Read `CODEX_START.md` before planning work. A runtime and approved Stage 1 encounter exist; distinguish them from the proposed autonomous-warfare features. Current product authority is `docs/CURRENT-DESIGN.md`; live status is `docs/STATUS.md`; scope and gates are in `CURRENT_CODEX_HANDOFF.md` and `docs/10-DEVELOPMENT-ROADMAP.md`.
 
 ## Communication
 
@@ -14,7 +14,7 @@ The owner has approved the foundation: a small outdoor science-fiction tactical 
 
 Do not turn the owner's personal motivation into website copy, telemetry labels, profiling, or an invented scientific claim. Read the neutral project principles instead. Do not copy private context from other projects into this public repository.
 
-Implement the current stage only. You may make reversible local implementation choices without asking for approval each time. Record assumptions. Pause for owner review before changing the project's purpose, adding paid services, collecting human data remotely, granting permissions, publishing deployments, introducing online multiplayer, or replacing a core contract. A routine blocker is not a reason to abandon useful independent work.
+Own the complete current stage cycle in `docs/DEVELOPMENT-CYCLE.md`. Advance only through the roadmap's authorized gates; a passing technical gate permits the stated dependent work, while an explicit owner experience gate requires actual owner judgment. You may make reversible local implementation choices without asking for approval each time. Record assumptions. Pause for owner review before changing the project's purpose, adding paid services, collecting human data remotely, granting permissions, publishing deployments, introducing online multiplayer, or replacing a core contract. A routine blocker is not a reason to abandon useful independent work.
 
 ## Architecture rules
 
@@ -41,8 +41,12 @@ Keep the default branch usable. Make focused commits. Inspect current branch and
 
 One integrator owns shared contracts and stage acceptance. Parallel agents may work only after agreeing on boundary types and file ownership. A sub-agent must state inputs, output paths, dependencies, tests, and exclusions. Do not let several agents independently redesign the same API.
 
-Useful Stage 0 split after contracts are reviewed: core/scheduler; experiment loader and registries; tests and telemetry adapters. Renderer work starts when usable snapshots and commands exist. The integrator must run the combined suite; sub-agent self-reports do not constitute acceptance.
+Use non-overlapping builder tasks only after shared contracts and file ownership are agreed. A fresh-context verifier challenges the exact integrated commit and records findings without repairing it. The manager coordinates repairs and re-verification until the gate passes or a real stop condition applies. If independent verification is unavailable, record the missing proof; do not rename self-review as independent verification.
 
 ## Completion gate
 
 For each work unit, provide a reproducible command, changed-file summary, actual test output, and honest limitations. Update `docs/STATUS.md`. A stage is implemented when its checks pass; user-visible experience approval is a separate owner decision. Never silently promote a later stage or rewrite the foundation while polishing a feature.
+
+## Autonomous warfare boundaries
+
+Team affiliation is not command authority. A hero teammate is independent; another hero's force cannot be commandeered by sharing a team. A commander issues an outcome and constraints; the subordinate policy chooses tactical actions through ordinary validation. Ownership, policy identity, body capabilities and policy memory are separate. Revocation/death/reassignment and delayed stale messages need explicit semantics. No hidden team blackboard or evaluator feedback may enter a live controller. Tactical construction uses predefined types at validated locations; freeform terraforming is outside the accepted direction.

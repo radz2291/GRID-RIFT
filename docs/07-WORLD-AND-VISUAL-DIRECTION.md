@@ -45,3 +45,9 @@ See [the six-image reference manifest](VISUAL-REFERENCES.md). Its two **revised*
 The player's challenge should emerge from terrain: changing elevation, sight-blocking ridges, concealment, multiple routes with distinct time/exposure trade-offs, relay-internal cover, a risky flank, and a secondary tactical pocket. These are **design candidates**, not already implemented or mandated all at once. The initial encounter must still be playable and measurable; layer complexity through tests rather than mechanically reproducing an illustration.
 
 Maintain elegant, efficient, iconic silhouettes and restrained cyan/amber lighting: clean outdoor techno-wilderness, not a glossy interior, crowded science-fiction city, or heavily decorated fantasy arena. The environment may be geometrically complex without being visually noisy.
+
+## Autonomous-warfare presentation alignment · v0.3
+
+Retain the six references in [the visual guide](VISUAL-REFERENCES.md). They guide shape, materials, tactical density and camera; they are not exact current collision specifications. Layered routes, high ground, concealment and risky exits should create readable choices without busy decorative geometry.
+
+Distinguish personal hero, peer hero and subordinate through silhouette/markers as well as cyan/amber. Show selected intent, recipient, status and cancellation clearly without blocking direct hero play. Construction must communicate valid/invalid placement, cost, completion and counterplay. Status labels are game feedback; hide implementation jargon from normal play. Validate the camera and compact HUD against an actual match, not a concept image alone.

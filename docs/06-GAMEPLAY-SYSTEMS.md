@@ -1,6 +1,6 @@
 # 06 · Gameplay systems
 
-Status: implementation-ready starting design, not a claim that balance has been tested. All numbers below are provisional content values.
+Current product specification: [current design](CURRENT-DESIGN.md). The sections below retain the original experiment design for comparison. Stage 1's actual controls/versions are in [Stage 1 implementation](STAGE1-IMPLEMENTATION.md) and [controls](STAGE1-CONTROLS.md); those records supersede these original defaults for the implemented duel. Stage 2 is an unverified legacy specification. Original Stage 3 is now compatibility milestone 3X.
 
 ## Stage 1: complete small encounter
 
@@ -53,3 +53,13 @@ Disable unnecessary screen shake, keep ground markers distinct from decoration, 
 Use `experiments/002-control-field.json`. Three independent participants compete over zones in an open field with movement and perception, but no combat, health, tower, lane, shop, or XP requirement. Each participant is its own team. Victory comes from uncontested presence. This is an architectural test, not a promise of equal entertainment value or a validated benchmark.
 
 The existence of this scenario is meant to expose hidden MOBA dependencies while the codebase is still small.
+
+## Current forward loop · v0.3
+
+Hero action → delegated intention → autonomous response → strategic investment → changed battlefield → rival counterplay → core outcome. This is the target loop, not implemented functionality.
+
+3B isolates direct hero play plus one autonomous ally, with visible order acceptance/update/cancel, tactical replanning, understandable reporting and restart/export. Its temporary bounded encounter outcome is a prototype test rule, not the final relay-score product identity.
+
+3C adds one energy economy and a small catalog of predefined structures (barrier, turret and bridge are candidate types). Each type needs cost, legal placement, build timing, durability, collision/sight/path effects and removal/counterplay. A bridge connects declared valid banks, not arbitrary terrain. At least two types must create distinct strategic choices; a deferred type is explicitly listed rather than shown as working. Resource production and opposing pressure continue without new hero clicks. Core vulnerability, simultaneous destruction and timeout are resolved by versioned rules.
+
+3D adds independent hero peers, each with their own force and explicit cooperation channels. Do not add a large hero roster, item shop or technology tree until the small loop proves decisions worth expanding. See [roadmap](10-DEVELOPMENT-ROADMAP.md) for acceptance gates.

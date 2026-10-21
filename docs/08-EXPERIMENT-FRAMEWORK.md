@@ -4,7 +4,7 @@
 
 An experiment is a versioned choice of world, participants, controllers, modules, timing, termination, and evaluation. A run is one execution of that experiment with a resolved seed, configuration, and input stream. A configuration file is not an implemented simulation.
 
-The three supplied files are draft specifications: `000-vertical-slice`, `001-tactical-combat`, and `002-control-field`. Treat their values as proposed defaults until tested. Never label a schema-valid experiment runnable unless every required module and policy is implemented and compatible.
+The `000-vertical-slice` family includes implemented versioned Stage 1 experiments. `001-tactical-combat` and `002-control-field` remain specifications on the inspected baseline. Preserve their identities. New autonomous-warfare drafts use a separate identity and stay outside the runnable experiment directory until the schema/catalog and runtime can represent them honestly. Never label a schema-valid experiment runnable unless every required module and policy is implemented and compatible.
 
 ## Validation layers
 
@@ -46,3 +46,9 @@ Use pseudonymous controller labels. Do not store free-form chat, personal identi
 Create a new experiment ID when the question or structure changes substantially. Bump a version when compatible structure changes meaning. A true interface break also changes API/schema versions and provides a migration or an explicit unsupported-replay message.
 
 The control-field scenario must share the generic runtime, commands, observations, and evaluation envelope without importing combat. Its successful implementation is the concrete initial evidence for replaceability.
+
+## Autonomous-warfare experiment identity
+
+Stage 3A supplies a draft under `docs/drafts/` with an explicit spec-only label, a module feasibility matrix and no claim of runtime registration. Stage 3B promotes a validated version when concrete implementations exist. Record ownership, intent delivery, policy identity, memory reset, communication delays, action budgets, construction rules and terminal semantics in the resolved configuration. Do not alter a published legacy JSON to make it fit the new direction.
+
+Distinguish fixed-action replay (same admitted effects) from a policy rerun (same decisions and memory), and test both for the deterministic local condition. Run the noncombat 3X through the generic runtime; schema validation alone does not prove it works.

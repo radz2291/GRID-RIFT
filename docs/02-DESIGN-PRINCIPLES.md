@@ -43,3 +43,9 @@ Use local, pseudonymous session identifiers. Do not infer personal identity, dia
 Foundational: simulation separation, permitted observations, explicit state, versioned experiments, readable outdoor starting identity, and evidence-based claims.
 
 Flexible: map layout, team count, camera details, tick rate, hero kits, items, policy algorithms, match duration, objectives, and evaluation tasks. Changing a flexible choice can still require a contract revision; use the change protocol rather than assuming every change is free.
+
+## Delegation and continuing consequences · v0.3
+
+An order defines intention and constraints, not the commander's imagined movement sequence. A loyal unit may retreat and replan when that best advances the goal. Make failures and status understandable; do not invent random disobedience to simulate intelligence. Peers and owned forces have different authority.
+
+Autonomous activity continues while the hero acts elsewhere. Investment has opportunity cost and counterplay. Tactical construction must alter movement, sight or pressure through authoritative rules; it cannot exist only as a renderer prop. Use [current design](CURRENT-DESIGN.md) for the target experience and [the cycle](DEVELOPMENT-CYCLE.md) for proof.

@@ -1,47 +1,13 @@
-# Codex handoff: begin here
+# Codex: start here
 
-## Current state
+Read [AGENTS.md](AGENTS.md), [current status](docs/STATUS.md), [current design](docs/CURRENT-DESIGN.md), [current handoff](CURRENT_CODEX_HANDOFF.md), [roadmap](docs/10-DEVELOPMENT-ROADMAP.md), and [development cycle](docs/DEVELOPMENT-CYCLE.md), in that order. Then read architecture, simulation contracts, agent intelligence, gameplay, and the code relevant to your stage.
 
-Handoff v0.1.0. The repository contains specifications, contracts, experiment examples, and validation tooling. It does not contain the simulation or client. Do not assume any runtime module listed in JSON is implemented.
+The repository includes a working Stage 0 runtime and owner-approved Stage 1 browser encounter. Do not restart them. The relay duel is a retained regression scenario, not the new product's primary loop. Stage 2 completion is not verified on the inspected remote refs; reconcile any later implementation before integration.
 
-The target is a modular tactical simulation whose first visual experience is an outdoor, technology-themed battle arena. Keep the first build small, but make its decisions meaningful. Build a simulation platform with one initial game, not a tightly coupled game pretending to be a platform.
+Current direction: hero-led autonomous warfare. Directly control a hero; issue high-level intentions to owned autonomous units; fight alongside independent teammate heroes; invest in structured tactical construction and resources; threaten an enemy core. These new capabilities are targets, not claims about the existing build.
 
-## Reading order
+The owner requested a full development cycle on 21 October 2026. The local stage manager owns planning, implementation, independent verification, repair, re-verification, playable evaluation, evidence, and delivery. Follow the roadmap's automatic technical gates and explicit owner experience gates. Do not stop after a design package or ask the owner to relay routine repairs.
 
-Read `AGENTS.md`, `docs/STATUS.md`, `docs/01-VISION.md`, `docs/02-DESIGN-PRINCIPLES.md`, `docs/03-SYSTEM-ARCHITECTURE.md`, and `docs/04-SIMULATION-CONTRACT.md`. Then inspect every file in `contracts/` and all three experiment JSON files. Consult gameplay, evaluation, and visual documents before their relevant stages.
+Start with repository reconciliation and Stage 3A. Run `npm ci` and `npm run check`. Preserve uncommitted work, the approved controls, published experiment identities and historical reports. Contract changes require an impact note, migration/version decision and tests before dependent implementation. Use local deterministic policies first; no required hosted inference.
 
-Run `npm ci` if a lockfile exists; otherwise run `npm install` and commit the generated lockfile. Run `npm run check`. This verifies the handoff, not a working game.
-
-## First assignment: Stage 0 only
-
-Create a real, headless simulation proof using the supplied contracts. Headless means it can run without graphics or a browser. Begin by reporting your understanding and a small implementation plan, then execute reversible technical work without waiting for routine confirmation.
-
-Implement explicit state, integer ticks, a seeded random source, a command queue, stable ordering, module registration, and an observation boundary. Add a minimal test-world module and two local policies. Connect the experiment loader to implemented-module registration; specification validation alone must never imply runtime availability.
-
-Demonstrate a policy swap, a no-op/read-only renderer sink, rejection of malformed commands, an agent that cannot read hidden state, fixed-action replay, and snapshot restore. Define the resolved-run manifest and canonical checksum before collecting evidence.
-
-Do not build full MOBA content, online multiplayer, training pipelines, paid inference, sophisticated visual effects, or a generic editor. A test fixture may use extremely simple movement and a terminal condition. It is not the Stage 1 game.
-
-## Required Stage 0 delivery
-
-Provide actual commands to run a demo, tests, and replay. Retain existing handoff checks and add runtime tests under separate names. Record seed, exact runtime/dependency versions, source commit or dirty-tree fingerprint, module versions, and output hashes. Include a brief change-impact note and update `docs/STATUS.md`.
-
-Complete all Stage 0 checks in `docs/10-DEVELOPMENT-ROADMAP.md`. Show the evidence, then present Stage 1 as the next bounded task. Do not begin a large later phase implicitly.
-
-## Decisions you may make
-
-Folder scaffolding, local test implementation, a small deterministic PRNG with test vectors, simple data structures, and maintainable build tools are delegated. Document choices and pin dependencies. Prefer TypeScript plus a small browser adapter for the initial route; Three.js is a renderer candidate, not the simulation authority.
-
-A Worker, ECS library, physics package, server, or separate service is not automatically required. Measure before adding one. If a supplied boundary proves insufficient, make a focused proposal with affected files, compatibility implications, and the test that exposes the problem.
-
-## When reporting to the owner
-
-Use this form:
-
-- Result: what is now real and runnable.
-- Evidence: commands, pass/fail counts, and run identifiers.
-- Experience: what the owner can do or see, or explicitly that no playable UI exists yet.
-- Limits: unsupported features and unresolved decisions.
-- Next: one bounded milestone.
-
-Never call a specification a finished feature. Never claim a human capability has been scientifically measured merely because a game metric exists.
+For each completed gate report: exact candidate SHA, commands/results, playable walkthrough if applicable, limitations, verdict and next action. Never equate passing tests with owner approval. See [historical startup](docs/history/CODEX_START-v0.1.md) only for lineage.

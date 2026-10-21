@@ -1,6 +1,6 @@
 # 04 · Simulation contract
 
-Version: 0.1.0. Normative starting contract; implementation and runtime verification are pending.
+Version: 0.1.0. Normative baseline contract; Stage 0 and Stage 1 implementations and scoped evidence exist. See `STATUS.md`. Autonomous-command extensions remain Stage 3A work.
 
 ## State and time
 
@@ -56,3 +56,7 @@ On replay mismatch, stop at the first divergent tick and report expected/actual 
 ## Required tests
 
 Same-run repeatability; saved-snapshot continuation; duplicate/late/invalid command rejection; same-tick tie handling; hidden-state non-interference; policy swap; renderer independence; unknown module/version rejection; terminal-state idempotence; and canonical hash stability. Numeric/runtime scope and test evidence must accompany any claim of determinism.
+
+## Forward extension constraints
+
+Stage 3A must specify versioned order payloads and status projections without silently changing these baseline envelopes. Orders, delivery queues, revisions, expiration, construction progress and policy memory must be serializable and included in the correct checkpoint. Define deterministic same-tick precedence and authorization at execution, not only at submission. Preserve historical replay compatibility under the recorded matching build, or fail explicitly. New module schemas are not executable implementations.
