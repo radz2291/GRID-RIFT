@@ -1,7 +1,13 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {validateOrder,orderPermitted} from '../../dist/contracts/autonomy.js';
+import {validateOrder} from '../../dist/contracts/autonomy-schema.js';
+import {orderPermitted,winningOrder} from '../../dist/contracts/autonomy.js';
 const valid={unitId:'body-a1',generation:0,orderId:'defense',revision:1,kind:'defend',target:{x:40,z:30},risk:'balanced',expiresTick:300};
+test('A-03 highest same-tick revision wins; cancellation wins only an equal revision',()=>{
+ const cancel={...valid,kind:'cancel',revision:3};
+ assert.equal(winningOrder([cancel,{...valid,revision:4}]).kind,'defend');
+ assert.equal(winningOrder([{...valid,revision:3},cancel]).kind,'cancel');
+});
 test('A-03 bounded order wire examples accept defend, secure, follow and cancellation',()=>{
  for(const value of [valid,{...valid,kind:'secure'},{...valid,kind:'follow',target:'body-p1'},{unitId:'body-a1',generation:0,orderId:'defense',revision:2,kind:'cancel'}])assert.equal(validateOrder(value),true,JSON.stringify(validateOrder.errors));
 });
