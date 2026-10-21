@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { runnerYaw } from '../runner-facing.js';
 import { makeBeam, makeCombatTrace, SHOT_HEIGHT } from './combat-visuals.js';
-import { sightMask } from '../sight-mask.js';
+import { sightPolygons, structureInSight } from '../sight-mask.js';
 import { shadeBySight } from './sight-shading.js';
 import type { Observation } from '../../../contracts/agent-interface.js';
-import type { ArenaMap, Point, TacticalEntity, TacticalWorld } from '../../../contracts/tactical-types.js';
+import type { ArenaMap, Blocker, Point, TacticalEntity, TacticalWorld } from '../../../contracts/tactical-types.js';
 
 const CYAN = 0x82e6ec, AMBER = 0xefb47b;
 export function publicView(observation: Observation): { world: TacticalWorld; entities: TacticalEntity[] } {
@@ -29,13 +29,17 @@ export class Battlefield {
   private relay = new THREE.Group();
   private destination: THREE.Mesh;
   private aim = new THREE.Group();
-  private sightColumns = 160;
-  private sightRows = 120;
+  private sightColumns = 512;
+  private sightRows = 384;
   private sightData = new Uint8Array(this.sightColumns*this.sightRows);
   private sightTexture = new THREE.DataTexture(this.sightData,this.sightColumns,this.sightRows,THREE.RedFormat);
   private sightMapSize = new THREE.Vector2(80,60);
   private sightMapCanvas = document.createElement('canvas');
+  private sightStencil = document.createElement('canvas');
+  private sightTime = {value:0};
+  private structures:{blocker:Blocker;sight:{value:number};target:number}[]=[];
   private sightKey = '';
+  private sightRebuildTimes:number[]=[];
   private selected: THREE.Mesh;
   private reduced = false;
   private observation?: Observation;
@@ -53,6 +57,7 @@ export class Battlefield {
     this.selected = this.ring(1, AMBER, .1); this.selected.visible = false; this.scene.add(this.selected);
     this.sightTexture.minFilter=THREE.LinearFilter;this.sightTexture.magFilter=THREE.LinearFilter;
     this.sightMapCanvas.width=this.sightColumns;this.sightMapCanvas.height=this.sightRows;
+    this.sightStencil.width=this.sightColumns;this.sightStencil.height=this.sightRows;
     this.resize(); window.addEventListener('resize', () => this.resize());
   }
   private sky(): THREE.CanvasTexture {
@@ -61,8 +66,8 @@ export class Battlefield {
     g.addColorStop(0, '#233247'); g.addColorStop(.48, '#7b8696'); g.addColorStop(.77, '#d8b39a'); g.addColorStop(1, '#758a96'); x.fillStyle = g; x.fillRect(0, 0, 4, 512);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
   }
-  private material(color: number, metalness = .05): THREE.MeshStandardMaterial { const material=new THREE.MeshStandardMaterial({ color, roughness: .86, metalness }); shadeBySight(material,this.sightTexture,this.sightMapSize); return material; }
-  private box(w: number, h: number, d: number, color: number): THREE.Mesh { return new THREE.Mesh(new THREE.BoxGeometry(w, h, d), this.material(color)); }
+  private material(color: number, metalness = .05,sight?:{value:number}): THREE.MeshStandardMaterial { const material=new THREE.MeshStandardMaterial({ color, roughness: .86, metalness }); shadeBySight(material,this.sightTexture,this.sightMapSize,this.sightTime,sight); return material; }
+  private box(w: number, h: number, d: number, color: number,sight?:{value:number}): THREE.Mesh { return new THREE.Mesh(new THREE.BoxGeometry(w, h, d), this.material(color,.05,sight)); }
   private ring(radius: number, color: number, width: number, opacity = .85): THREE.Mesh {
     const m = new THREE.Mesh(new THREE.RingGeometry(radius - width, radius + width, 80), new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide, depthWrite: false })); m.rotation.x = -Math.PI / 2; m.position.y = .035; return m;
   }
@@ -77,9 +82,10 @@ export class Battlefield {
       seam.position.set(x, .006, z); seam.rotation.y = i * 2.4; this.scene.add(seam);
     }
     for (const blocker of map.blockers) {
-      const g = new THREE.Group(); const b = this.box(blocker.w, blocker.height, blocker.d, 0x84918f); b.position.y = blocker.height / 2; g.add(b);
-      const cap = this.box(blocker.w * .93, .15, blocker.d * .9, 0xb5bab0); cap.position.y = blocker.height + .06; g.add(cap);
-      const inset = this.box(.055, blocker.height * .62, .025, 0x8ed4db); inset.position.set(-blocker.w * .35, blocker.height * .55, blocker.d / 2 + .015); g.add(inset);
+      const sight={value:0};this.structures.push({blocker,sight,target:0});
+      const g = new THREE.Group(); const b = this.box(blocker.w, blocker.height, blocker.d, 0x84918f,sight); b.position.y = blocker.height / 2; g.add(b);
+      const cap = this.box(blocker.w * .93, .15, blocker.d * .9, 0xb5bab0,sight); cap.position.y = blocker.height + .06; g.add(cap);
+      const inset = this.box(.055, blocker.height * .62, .025, 0x8ed4db,sight); inset.position.set(-blocker.w * .35, blocker.height * .55, blocker.d / 2 + .015); g.add(inset);
       g.position.set(blocker.x, 0, blocker.z); this.scene.add(g);
     }
     // Distant spires and pale ridges sit beyond the bounded, flat playable plateau.
@@ -171,16 +177,28 @@ export class Battlefield {
     const {world,entities}=publicView(observation),map=world['world.planar'],radius=world['perception.radius-los'].radius;
     const sources=entities.filter(e=>observation.controlledEntityIds.includes(e.id)&&e.components.combat?.alive&&e.components.movement).map(e=>({x:e.components.movement!.x,z:e.components.movement!.z}));
     const key=JSON.stringify([map.mapVersion,radius,sources]);if(key===this.sightKey)return;this.sightKey=key;
-    this.sightMapSize.set(map.width,map.depth);sightMask(map,sources,radius,this.sightColumns,this.sightRows,this.sightData);this.sightTexture.needsUpdate=true;
-    const context=this.sightMapCanvas.getContext('2d')!,image=context.createImageData(this.sightColumns,this.sightRows);
-    for(let i=0;i<this.sightData.length;i++){image.data[i*4]=4;image.data[i*4+1]=9;image.data[i*4+2]=18;image.data[i*4+3]=Math.round((255-this.sightData[i]!)*.7);}
+    const rebuildStarted=performance.now();
+    this.sightMapSize.set(map.width,map.depth);
+    const stencil=this.sightStencil.getContext('2d',{willReadFrequently:true})!;
+    stencil.filter='none';stencil.fillStyle='#000';stencil.fillRect(0,0,this.sightColumns,this.sightRows);
+    stencil.fillStyle='#fff';stencil.filter='blur(4px)';
+    for(const polygon of sightPolygons(map,sources,radius)) {
+      stencil.beginPath();polygon.forEach((p,i)=>{const x=p.x/map.width*this.sightColumns,z=p.z/map.depth*this.sightRows;if(i===0)stencil.moveTo(x,z);else stencil.lineTo(x,z);});stencil.closePath();stencil.fill();
+    }
+    stencil.filter='none';
+    const image=stencil.getImageData(0,0,this.sightColumns,this.sightRows),context=this.sightMapCanvas.getContext('2d')!;
+    for(let i=0;i<this.sightData.length;i++){this.sightData[i]=image.data[i*4]!;image.data[i*4]=4;image.data[i*4+1]=9;image.data[i*4+2]=18;image.data[i*4+3]=Math.round((255-this.sightData[i]!)*.7);}
+    this.sightTexture.needsUpdate=true;
     context.putImageData(image,0,0);
+    for(const structure of this.structures)structure.target=structureInSight(structure.blocker,sources,radius,map)?1:0;
+    this.sightRebuildTimes.push(performance.now()-rebuildStarted);if(this.sightRebuildTimes.length>200)this.sightRebuildTimes.shift();
   }
   private drawMinimap(observation: Observation): void {
     const c = document.querySelector<HTMLCanvasElement>('#minimap')!; const ctx = c.getContext('2d')!; const { world, entities } = publicView(observation); const map = world['world.planar'];
     ctx.fillStyle = '#152a34'; ctx.fillRect(0, 0, c.width, c.height); const sx = c.width / map.width, sz = c.height / map.depth;
     ctx.fillStyle = '#71878b'; for (const b of map.blockers) ctx.fillRect((b.x - b.w / 2) * sx, (b.z - b.d / 2) * sz, b.w * sx, b.d * sz);
     ctx.drawImage(this.sightMapCanvas,0,0,c.width,c.height);
+    ctx.fillStyle='#71878b';for(const structure of this.structures)if(structure.target){const b=structure.blocker;ctx.fillRect((b.x-b.w/2)*sx,(b.z-b.d/2)*sz,b.w*sx,b.d*sz);}
     ctx.strokeStyle = '#eab177'; ctx.beginPath(); ctx.arc(map.relay.x * sx, map.relay.z * sz, 5 * sx, 0, Math.PI * 2); ctx.stroke();
     for (const e of entities) { const m = e.components.movement; if (!m || !e.components.combat?.alive) continue; const friendly = observation.controlledEntityIds.includes(e.id); ctx.fillStyle = friendly ? '#7fe5eb' : '#eab177'; const x = m.x * sx, y = m.z * sz; ctx.beginPath(); if (friendly) { ctx.moveTo(x, y - 5); ctx.lineTo(x + 4, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 4, y); } else { ctx.moveTo(x, y - 5); ctx.lineTo(x + 5, y + 4); ctx.lineTo(x - 5, y + 4); } ctx.closePath(); ctx.fill(); }
   }
@@ -209,14 +227,17 @@ export class Battlefield {
   render(): void {
     const now = performance.now(), dt = Math.min(.1, Math.max(0, (now - this.cameraFrameAt) / 1000)); this.cameraFrameAt = now;
     const blend = this.reduced ? 1 : 1 - Math.exp(-dt * 14);
+    this.sightTime.value=this.reduced?0:now/1000;
+    for(const structure of this.structures)structure.sight.value=THREE.MathUtils.lerp(structure.sight.value,structure.target,blend);
     this.peekYaw = THREE.MathUtils.lerp(this.peekYaw, this.desiredYaw, blend); this.peekLift = THREE.MathUtils.lerp(this.peekLift, this.desiredLift, blend);
     if (Math.abs(this.peekYaw - this.desiredYaw) < .0001) this.peekYaw = this.desiredYaw;
     if (Math.abs(this.peekLift - this.desiredLift) < .0001) this.peekLift = this.desiredLift;
     this.updateCamera(); this.gl.render(this.scene, this.camera);
   }
   capture(): string { this.render(); return this.gl.domElement.toDataURL('image/png'); }
-  diagnostics(): { renderer: string | null; vendor: string | null; drawCalls: number; triangles: number; renderPixelRatio: number } {
+  diagnostics(): { renderer: string | null; vendor: string | null; drawCalls: number; triangles: number; renderPixelRatio: number; sightMask:{width:number;height:number;samples:number;meanMs:number|null;p95Ms:number|null} } {
     const context = this.gl.getContext(); const info = context.getExtension('WEBGL_debug_renderer_info');
-    return { renderer: info ? String(context.getParameter(info.UNMASKED_RENDERER_WEBGL)) : null, vendor: info ? String(context.getParameter(info.UNMASKED_VENDOR_WEBGL)) : null, drawCalls: this.gl.info.render.calls, triangles: this.gl.info.render.triangles, renderPixelRatio: this.gl.getPixelRatio() };
+    const ordered=[...this.sightRebuildTimes].sort((a,b)=>a-b),n=ordered.length;
+    return { renderer: info ? String(context.getParameter(info.UNMASKED_RENDERER_WEBGL)) : null, vendor: info ? String(context.getParameter(info.UNMASKED_VENDOR_WEBGL)) : null, drawCalls: this.gl.info.render.calls, triangles: this.gl.info.render.triangles, renderPixelRatio: this.gl.getPixelRatio(),sightMask:{width:this.sightColumns,height:this.sightRows,samples:n,meanMs:n?ordered.reduce((a,b)=>a+b,0)/n:null,p95Ms:ordered[Math.floor(n*.95)]??null} };
   }
 }

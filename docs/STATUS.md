@@ -48,3 +48,5 @@ The Stage 1 HUD now follows compact edge positioning: minimap bottom-left, healt
 Pause usability: a centred Resume encounter button appears whenever a started encounter is paused. Menu/Controls panels now dismiss on outside clicks; menu actions close the menu. Actual browser checks passed; simulation and experiment identities remain unchanged.
 
 Stage 1 sight readability: known terrain outside current sight and behind cover is now shaded in the battlefield and minimap, including reduced-effects mode. Exact enemy visibility rules are unchanged. This is current-sight fog, not exploration memory. Owner visual review remains open.
+
+Fog refinement: whole-building reveal fixes roofs trapped inside their own occluder. A higher-resolution antialiased contour and soft atmospheric veil replace the pixelated spotlight treatment. Unit visibility rules, policies and experiment identities are unchanged. Owner visual review remains open.
