@@ -3,6 +3,7 @@ import { runnerYaw } from '../runner-facing.js';
 import { makeBeam, makeCombatTrace, SHOT_HEIGHT } from './combat-visuals.js';
 import { sightPolygons, structureInSight } from '../sight-mask.js';
 import { shadeBySight } from './sight-shading.js';
+import type { CommandView } from '../../../contracts/autonomy.js';
 import type { Observation } from '../../../contracts/agent-interface.js';
 import type { ArenaMap, Blocker, Point, TacticalEntity, TacticalWorld } from '../../../contracts/tactical-types.js';
 
@@ -41,6 +42,7 @@ export class Battlefield {
   private sightKey = '';
   private sightRebuildTimes:number[]=[];
   private selected: THREE.Mesh;
+  private intention: THREE.Mesh;
   private reduced = false;
   private observation?: Observation;
   private updateKey = '';
@@ -54,6 +56,7 @@ export class Battlefield {
     const sun = new THREE.DirectionalLight(0xffd5a4, 3.1); sun.position.set(-50, 60, -35); this.scene.add(sun);
     this.scene.add(this.dynamic, this.relay, this.aim);
     this.destination = this.ring(.65, CYAN, .075); this.destination.visible = false; this.scene.add(this.destination);
+    this.intention = this.ring(1.4, CYAN, .055, .6); this.intention.visible = false; this.scene.add(this.intention);
     this.selected = this.ring(1, AMBER, .1); this.selected.visible = false; this.scene.add(this.selected);
     this.sightTexture.minFilter=THREE.LinearFilter;this.sightTexture.magFilter=THREE.LinearFilter;
     this.sightMapCanvas.width=this.sightColumns;this.sightMapCanvas.height=this.sightRows;
@@ -99,15 +102,15 @@ export class Battlefield {
       const rock = new THREE.Mesh(new THREE.CylinderGeometry(2, 4, 4 + i % 5, 5), this.material(0x6b7e83)); rock.position.set(x + Math.sin(i * 5) * 3, -1.5, i * 6); this.scene.add(rock);
     }
     for (const spawn of map.spawns) {
-      const m = this.ring(map.spawnRecoveryRadius ?? 3, spawn === map.spawns[0] ? CYAN : AMBER, .07, .45); m.position.set(spawn.x, .035, spawn.z); this.scene.add(m);
-      this.label('RECOVERY', spawn.x, .7, spawn.z + 3.8, spawn === map.spawns[0] ? '#82e6ec' : '#efb47b');
+      const m = this.ring(map.spawnRecoveryRadius ?? 3, spawn.teamId === map.spawns[0]?.teamId ? CYAN : AMBER, .07, .45); m.position.set(spawn.x, .035, spawn.z); this.scene.add(m);
+      this.label('RECOVERY', spawn.x, .7, spawn.z + 3.8, spawn.teamId === map.spawns[0]?.teamId ? '#82e6ec' : '#efb47b');
     }
     this.relay.position.set(map.relay.x, 0, map.relay.z);
     const pad = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.9, .16, 48), this.material(0x516368)); pad.position.y = .08; this.relay.add(pad);
     this.relay.add(this.ring(5, AMBER, .055, .7), this.ring(2.25, AMBER, .07), this.ring(1.5, AMBER, .035));
     const core = new THREE.Mesh(new THREE.CylinderGeometry(.45, .7, 1.7, 6), this.material(0xbed2d2)); core.position.y = .95; this.relay.add(core);
     const beacon = new THREE.Mesh(new THREE.CylinderGeometry(.1, .1, 4.8, 10), new THREE.MeshBasicMaterial({ color: AMBER, transparent: true, opacity: .5 })); beacon.position.y = 2.6; this.relay.add(beacon);
-    this.label('CENTRAL RELAY', map.relay.x, 5.5, map.relay.z, '#efc899');
+    this.label(map.layout.startsWith('autonomous') ? 'CROSSING' : 'CENTRAL RELAY', map.relay.x, 5.5, map.relay.z, '#efc899');
     this.target.set(map.width / 2, 0, map.depth / 2 + 4); this.updateCamera();
   }
   private label(text: string, x: number, y: number, z: number, color: string): void {
@@ -116,9 +119,10 @@ export class Battlefield {
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false })); sprite.position.set(x, y, z); sprite.scale.set(10, 1.25, 1); this.scene.add(sprite);
   }
-  private runner(friendly: boolean): THREE.Group {
+  private runner(friendly: boolean, ally = false): THREE.Group {
     const g = new THREE.Group(); const color = friendly ? CYAN : AMBER;
     g.add(this.ring(.8, color, friendly ? .07 : .13));
+    if (ally) { const badge = new THREE.Mesh(new THREE.OctahedronGeometry(.2), new THREE.MeshBasicMaterial({ color: CYAN })); badge.position.y = 2.9; g.add(badge); }
     const torso = new THREE.Mesh(new THREE.CylinderGeometry(.33, .26, .75, 6), this.material(0x152b36)); torso.position.y = 1.13; g.add(torso);
     const helmet = new THREE.Mesh(new THREE.SphereGeometry(.29, 12, 8), this.material(0xb1c9cc, .35)); helmet.scale.set(1, 1.1, 1); helmet.position.y = 1.78; g.add(helmet);
     const visor = this.box(.43, .105, .18, color); visor.position.set(0, 1.8, -.23); g.add(visor);
@@ -134,10 +138,11 @@ export class Battlefield {
     this.observation = observation; const { world, entities } = publicView(observation); const map = world['world.planar']; if (!this.map) this.buildMap(map);
     this.updateSight(observation);
     const me = entities.find(e => observation.controlledEntityIds.includes(e.id)); const body = me?.components.movement;
+    const friendly = (id: string): boolean => (entities.find(e => e.id === id)?.components.movement?.teamId ?? map.spawns.find(spawn => spawn.actorId === id)?.teamId) === body?.teamId;
     for (const actor of this.actors.values()) actor.visible = false;
     for (const entity of entities) {
       const m = entity.components.movement, c = entity.components.combat; if (!m || !c?.alive) continue;
-      let actor = this.actors.get(entity.id); if (!actor) { actor = this.runner(observation.controlledEntityIds.includes(entity.id)); this.actors.set(entity.id, actor); this.scene.add(actor); }
+      let actor = this.actors.get(entity.id); if (!actor) { actor = this.runner(friendly(entity.id), friendly(entity.id) && !observation.controlledEntityIds.includes(entity.id)); this.actors.set(entity.id, actor); this.scene.add(actor); }
       actor.visible = true; actor.position.set(m.x, 0, m.z); actor.rotation.y = runnerYaw(entity, entities);
     }
     // All transient graphics are rebuilt exclusively from this permitted observation.
@@ -145,19 +150,23 @@ export class Battlefield {
     const combat = world['combat.runner'];
     for (const entity of entities) {
       const m = entity.components.movement, c = entity.components.combat; if (!m || !c?.alive) continue;
-      const health = this.box(1.1 * c.hp / c.maxHp, .07, .06, observation.controlledEntityIds.includes(entity.id) ? CYAN : AMBER); health.position.set(m.x - .55 * (1 - c.hp / c.maxHp), 2.5, m.z); this.dynamic.add(health);
+      const health = this.box(1.1 * c.hp / c.maxHp, .07, .06, friendly(entity.id) ? CYAN : AMBER); health.position.set(m.x - .55 * (1 - c.hp / c.maxHp), 2.5, m.z); this.dynamic.add(health);
       if (c.windup) {
         const dx = c.windup.x - m.x, dz = c.windup.z - m.z, distance = Math.hypot(dx, dz) || 1;
         const end = { x: m.x + dx / distance * combat.pulseRange, z: m.z + dz / distance * combat.pulseRange };
-        const color = observation.controlledEntityIds.includes(entity.id) ? CYAN : AMBER;
+        const color = friendly(entity.id) ? CYAN : AMBER;
         const line = this.line({ x: m.x, z: m.z }, end, color, .75); this.dynamic.add(line);
         const tell = this.ring(combat.pulseRadius, color, .09); tell.position.set(end.x, .08, end.z); this.dynamic.add(tell);
       }
     }
-    for (const p of combat.projectiles) { const ball = new THREE.Mesh(new THREE.SphereGeometry(combat.pulseRadius, 8, 6), new THREE.MeshBasicMaterial({ color: observation.controlledEntityIds.includes(p.ownerId) ? CYAN : AMBER })); ball.position.set(p.x, SHOT_HEIGHT, p.z); this.dynamic.add(ball); }
-    for (const t of combat.traces) if (observation.tick - t.tick <= 3) this.dynamic.add(makeCombatTrace(t, observation.controlledEntityIds.includes(t.actorId) ? CYAN : AMBER));
+    for (const p of combat.projectiles) { const ball = new THREE.Mesh(new THREE.SphereGeometry(combat.pulseRadius, 8, 6), new THREE.MeshBasicMaterial({ color: p.teamId === body?.teamId ? CYAN : AMBER })); ball.position.set(p.x, SHOT_HEIGHT, p.z); this.dynamic.add(ball); }
+    for (const t of combat.traces) if (observation.tick - t.tick <= 3) this.dynamic.add(makeCombatTrace(t, friendly(t.actorId) ? CYAN : AMBER));
     this.destination.visible = !!body?.destination; if (body?.destination) this.destination.position.set(body.destination.x, .06, body.destination.z);
-    const sel = entities.find(e => e.id === selectedId)?.components.movement; this.selected.visible = !!sel; if (sel) this.selected.position.set(sel.x, .06, sel.z);
+    const sel = entities.find(e => e.id === selectedId)?.components.movement; this.selected.visible = !!sel; if (sel) { this.selected.position.set(sel.x, .06, sel.z); (this.selected.material as THREE.MeshBasicMaterial).color.setHex(friendly(selectedId!) ? CYAN : AMBER); }
+    const owned = observation.world['command.owned'] as unknown as CommandView | undefined;
+    const order = owned?.orders.find(o => o.unitId === selectedId && (o.status === 'active' || o.status === 'pending'));
+    const intention = order?.target; this.intention.visible = typeof intention === 'object';
+    if (typeof intention === 'object') this.intention.position.set(intention.x, .07, intention.z);
     if (body && (sel || (pointer && this.hit(pointer)))) { const range = this.ring(combat.basicRange, CYAN, .035, .45); range.position.set(body.x, .055, body.z); this.dynamic.add(range); }
     for (const child of [...this.aim.children]) { this.aim.remove(child); if (child instanceof THREE.Mesh) { child.geometry.dispose(); if (child.material instanceof THREE.Material) child.material.dispose(); } }
     if (body && pointer && targeting) {
@@ -200,14 +209,20 @@ export class Battlefield {
     ctx.drawImage(this.sightMapCanvas,0,0,c.width,c.height);
     ctx.fillStyle='#71878b';for(const structure of this.structures)if(structure.target){const b=structure.blocker;ctx.fillRect((b.x-b.w/2)*sx,(b.z-b.d/2)*sz,b.w*sx,b.d*sz);}
     ctx.strokeStyle = '#eab177'; ctx.beginPath(); ctx.arc(map.relay.x * sx, map.relay.z * sz, 5 * sx, 0, Math.PI * 2); ctx.stroke();
-    for (const e of entities) { const m = e.components.movement; if (!m || !e.components.combat?.alive) continue; const friendly = observation.controlledEntityIds.includes(e.id); ctx.fillStyle = friendly ? '#7fe5eb' : '#eab177'; const x = m.x * sx, y = m.z * sz; ctx.beginPath(); if (friendly) { ctx.moveTo(x, y - 5); ctx.lineTo(x + 4, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 4, y); } else { ctx.moveTo(x, y - 5); ctx.lineTo(x + 5, y + 4); ctx.lineTo(x - 5, y + 4); } ctx.closePath(); ctx.fill(); }
+    for (const e of entities) { const m = e.components.movement; if (!m || !e.components.combat?.alive) continue; const hero = entities.find(entity => observation.controlledEntityIds.includes(entity.id)); const friendly = m.teamId === hero?.components.movement?.teamId; ctx.fillStyle = friendly ? '#7fe5eb' : '#eab177'; const x = m.x * sx, y = m.z * sz; ctx.beginPath(); if (friendly && !observation.controlledEntityIds.includes(e.id)) { ctx.rect(x - 3, y - 3, 6, 6); } else if (friendly) { ctx.moveTo(x, y - 5); ctx.lineTo(x + 4, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 4, y); } else { ctx.moveTo(x, y - 5); ctx.lineTo(x + 5, y + 4); ctx.lineTo(x - 5, y + 4); } ctx.closePath(); ctx.fill(); }
   }
   point(clientX: number, clientY: number): Point | null {
     const r = this.canvas.getBoundingClientRect(); this.ray.setFromCamera(new THREE.Vector2((clientX - r.left) / r.width * 2 - 1, -(clientY - r.top) / r.height * 2 + 1), this.camera); const p = this.ray.ray.intersectPlane(this.plane, new THREE.Vector3()); if (!p || !this.map || p.x < 0 || p.z < 0 || p.x > this.map.width || p.z > this.map.depth) return null; return { x: p.x, z: p.z };
   }
   hit(point: Point): string | null {
     if (!this.observation) return null; const { entities } = publicView(this.observation);
-    return entities.find(e => !this.observation!.controlledEntityIds.includes(e.id) && e.components.combat?.alive && e.components.movement && Math.hypot(e.components.movement.x - point.x, e.components.movement.z - point.z) < 1.4)?.id ?? null;
+    const team = entities.find(e => this.observation!.controlledEntityIds.includes(e.id))?.components.movement?.teamId;
+    return entities.find(e => e.components.movement?.teamId !== team && e.components.combat?.alive && e.components.movement && Math.hypot(e.components.movement.x - point.x, e.components.movement.z - point.z) < 1.4)?.id ?? null;
+  }
+  hitFriendly(point: Point): string | null {
+    if (!this.observation) return null; const { entities } = publicView(this.observation);
+    const team = entities.find(e => this.observation!.controlledEntityIds.includes(e.id))?.components.movement?.teamId;
+    return entities.find(e => e.components.movement && e.components.movement.teamId === team && !this.observation!.controlledEntityIds.includes(e.id) && e.components.combat?.alive && Math.hypot(e.components.movement.x - point.x, e.components.movement.z - point.z) < 1.4)?.id ?? null;
   }
   center(point: Point): void { this.target.set(point.x, 0, point.z); this.updateCamera(); }
   pan(dx: number, dy: number): void {

@@ -1,6 +1,6 @@
 # Stage 3A · Autonomous-command foundation
 
-Status: authorized next technical milestone; not yet implemented. Updated 21 October 2026. The owner's full-cycle request supersedes this document's earlier design-only stopping instruction. Complete 3A and, after independent technical PASS, build 3B through verification, repair and playable delivery. The first owner experience gate is the completed 3B playable.
+Status: technical design/contracts PASS at a60e09e after independent repair/re-verification; 3B implementation is now in progress, without owner experience approval. See [design](STAGE3A-DESIGN.md) and [verdict](evidence/3A/independent-review-a60e09e.md). Updated 21 October 2026. The owner's full-cycle request supersedes this document's earlier design-only stopping instruction. Complete 3A and, after independent technical PASS, build 3B through verification, repair and playable delivery. The first owner experience gate is the completed 3B playable.
 
 Read [current design](CURRENT-DESIGN.md), [current handoff](../CURRENT_CODEX_HANDOFF.md), [roadmap](10-DEVELOPMENT-ROADMAP.md), [cycle](DEVELOPMENT-CYCLE.md) and [status](STATUS.md).
 

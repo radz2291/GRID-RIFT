@@ -1,5 +1,9 @@
 # Implementation status
 
+## Current autonomous development gate · 21 October 2026
+
+Stage 3A technical **PASS** at `a60e09e9b1d2479360c297bc4f66ea408499f985`, independently reviewed after repairing the failed first candidate. See [3A verdict](evidence/3A/independent-review-a60e09e.md). Stage 3B implementation candidate is integrated for regression, browser walkthrough and independent challenge; no technical PASS or owner experience approval is claimed yet. [Playable scope and controls](STAGE3B-IMPLEMENTATION.md). Stage 3C remains gated on actual owner experience approval. The older forward-state table below is historical documentation-alignment status and is superseded by this section.
+
 **Stage 1 complete and owner-approved on 21 October 2026.** Approved playable source: `c84e86c84f114bd45c9e8168f83af5790f579675`, experiment 0.4.0. The owner stated: "Good, stage one is approved." See [approval and verification](STAGE1-VERIFICATION.md#owner-approval--21-october-2026).
 
 Stage 0 is retained. Stage 1 includes the reviewed controls, HUD/pause menus, shared native human/AI facing, corrected shots, fog of war and refined roof/edge treatment. Historical combined suite: 117 passing tests. Final art, balance refinement, accessibility and wider hardware coverage remain later work. A separate Stage 2 implementation is unverified on the inspected remote refs; this is not a claim about unseen local work.

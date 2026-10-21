@@ -1,5 +1,7 @@
 # GRID-RIFT
 
+Current development: autonomous crossing candidate on `design/stage3a-autonomous-warfare`. Run `npm ci` then `npm run dev`; the browser defaults to the new skirmish. The approved Stage 1 relay duel remains at `http://127.0.0.1:4173/?scenario=duel`. See [autonomous controls and scope](docs/STAGE3B-IMPLEMENTATION.md) and [live status](docs/STATUS.md) for verification and owner-review gates.
+
 A hero-led autonomous warfare simulation: fight as your hero, lead autonomous forces through high-level intent, and shape an outdoor strategic battlefield. This is the approved forward direction; the current runnable build remains the Stage 1 relay duel.
 
 **Stage 1 complete and owner-approved · 21 October 2026.**

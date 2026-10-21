@@ -1,9 +1,9 @@
 import specification from '../../experiments/000-vertical-slice-facing.json' with {type:'json'};
 import envelope from '../../contracts/experiment.schema.json' with {type:'json'};
 import { Ajv2020 } from 'ajv/dist/2020.js';
-import type { ActionIntent, JsonObject, Observation } from '../../contracts/agent-interface.js';
+import type { ActionIntent, AgentPolicy, JsonObject, Observation } from '../../contracts/agent-interface.js';
 import type { DomainEvent, RunManifest, TerminalResult } from '../../contracts/simulation-interface.js';
-import type { SimulationConfig } from '../core/types.js';
+import type { RuntimeModule, SimulationConfig } from '../core/types.js';
 import type { TacticalEntity } from '../../contracts/tactical-types.js';
 import { Engine } from '../core/engine.js';
 import { clone, hash } from '../core/data.js';
@@ -30,17 +30,26 @@ export interface GameSession {
   restart():void;
   exportRun():unknown;
 }
+export interface SessionDefinition {
+  config:SimulationConfig; modules:RuntimeModule[]; policies:Record<string,AgentPolicy>;
+  content:JsonObject; id:string; version:string; format:string; evaluationVersion:string;
+  policyIdentities:Record<string,{id:string;version:string}>;
+}
 export function createGame(browserMetadata:JsonObject={}):GameSession {
-  const config=encounterConfig();
+  return createGameSession({config:encounterConfig(),modules:tacticalModules,policies:{p2:utilityPolicy},content:clone(specification) as unknown as JsonObject,id:specification.id,version:specification.version,format:'grid-rift/encounter-export/v0',evaluationVersion:'encounter/0.3.0',policyIdentities:Object.fromEntries(specification.participants.map(p=>[p.id,{id:p.controller.policyId,version:p.controller.policyVersion}]))},browserMetadata);
+}
+/** Composition adapter only: independent controllers still use the unchanged Runner and Engine. */
+export function createGameSession(definition:SessionDefinition,browserMetadata:JsonObject={}):GameSession {
+  const {config}=definition;
   const build=typeof __BUILD_INFO__!=='undefined'?__BUILD_INFO__:{sourceCommit:'headless-test',dirtyTreeFingerprint:null,dependencyLockHash:'headless-test',runtime:{}};
   let engine:Engine,runner:Runner,manifest:RunManifest,sequence=0,pending:ActionIntent|null=null;
   let human:HumanOrderState=initialHumanOrder();
   let humanOrders:{tick:number;kind:string;payload:JsonObject}[]=[];
   let events:{tick:number;events:readonly DomainEvent[]}[]=[],hashes:{tick:number;hash:string}[]=[];
   function restart() {
-    engine=new Engine(config,tacticalModules);
-    manifest={runId:`encounter-${Date.now()}`,schemaVersion:'0.1.0',apiVersion:'grid-rift/v0',experimentId:specification.id,experimentVersion:specification.version,experimentHash:hash(specification),expandedConfiguration:clone(specification) as unknown as JsonObject,seed:config.seed,sourceCommit:build.sourceCommit,dirtyTreeFingerprint:build.dirtyTreeFingerprint,dependencyLockHash:build.dependencyLockHash,runtime:{...build.runtime,...browserMetadata},modules:config.modules.map(({id,version})=>({id,version})),controllers:specification.participants.map(p=>({id:p.id,policyId:p.controller.policyId,policyVersion:p.controller.policyVersion,budget:config.controllers.find(c=>c.id===p.id)!.budget})),evaluationVersion:'encounter/0.3.0',inputMode:'live'};
-    runner=new Runner(engine,{p2:utilityPolicy},hash(manifest),config.controllers,config.seed);
+    engine=new Engine(config,definition.modules);
+    manifest={runId:`encounter-${Date.now()}`,schemaVersion:'0.1.0',apiVersion:'grid-rift/v0',experimentId:definition.id,experimentVersion:definition.version,experimentHash:hash(definition.content),expandedConfiguration:clone(definition.content),seed:config.seed,sourceCommit:build.sourceCommit,dirtyTreeFingerprint:build.dirtyTreeFingerprint,dependencyLockHash:build.dependencyLockHash,runtime:{...build.runtime,...browserMetadata},modules:config.modules.map(({id,version})=>({id,version})),controllers:config.controllers.map(p=>({id:p.id,policyId:definition.policyIdentities[p.id]!.id,policyVersion:definition.policyIdentities[p.id]!.version,budget:p.budget})),evaluationVersion:definition.evaluationVersion,inputMode:'live'};
+    runner=new Runner(engine,definition.policies,hash(manifest),config.controllers,config.seed);
     sequence=0;pending=null;human=initialHumanOrder();humanOrders=[];events=[];hashes=[{tick:0,hash:engine.stateHash()}];
   }
   restart();
@@ -98,6 +107,6 @@ export function createGame(browserMetadata:JsonObject={}):GameSession {
       const result=runner.step();events.push({tick:result.tick,events:result.events});hashes.push({tick:engine.tick,hash:engine.stateHash()});
     },
     terminal:()=>clone(engine.snapshot().terminal),
-    exportRun:()=>clone({format:'grid-rift/encounter-export/v0',manifest,config,inputs:runner.inputJournal,humanOrders,humanControllerState:{version:'0.3.0',standingOrder:human,unsampledOrder:pending},admissions:runner.admissionJournal,observations:runner.observationJournal,events,hashes,checkpoint:runner.checkpoint(),terminal:engine.snapshot().terminal,finalHash:engine.stateHash()})
+    exportRun:()=>clone({format:definition.format,manifest,config,inputs:runner.inputJournal,humanOrders,humanControllerState:{version:'0.3.0',standingOrder:human,unsampledOrder:pending},admissions:runner.admissionJournal,observations:runner.observationJournal,events,hashes,checkpoint:runner.checkpoint(),terminal:engine.snapshot().terminal,finalHash:engine.stateHash()})
   };
 }

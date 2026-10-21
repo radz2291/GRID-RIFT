@@ -1,16 +1,18 @@
 import { readFileSync } from 'node:fs';
 import { Engine } from '../dist/src/core/engine.js';
 import { tacticalModules } from '../dist/src/modules/tactical/index.js';
+import { autonomousModules } from '../dist/src/modules/autonomy.js';
 import { Runner } from '../dist/src/runner/runner.js';
 import { canonical,hash } from '../dist/src/core/data.js';
 import { sourceIdentity } from '../dist/src/runner/runtime.js';
 export function replayEncounter(run,verifySource=true) {
-  if(run.format!=='grid-rift/encounter-export/v0')throw new Error('Unknown encounter export format');
+  if(!['grid-rift/encounter-export/v0','grid-rift/autonomous-export/v0'].includes(run.format))throw new Error('Unknown encounter export format');
   if(verifySource) {
     const current=sourceIdentity();
     if(run.manifest.sourceCommit!==current.sourceCommit||run.manifest.dependencyLockHash!==current.dependencyLockHash||run.manifest.runtime.sourceTreeHash!==current.runtime.sourceTreeHash)throw new Error('Encounter replay source/lock mismatch; use the recorded checkout');
   }
-  const engine=new Engine(run.config,tacticalModules), runner=new Runner(engine,{},hash(run.manifest),run.config.controllers,run.config.seed);
+  const modules=run.format==='grid-rift/autonomous-export/v0'?autonomousModules:tacticalModules;
+  const engine=new Engine(run.config,modules), runner=new Runner(engine,{},hash(run.manifest),run.config.controllers,run.config.seed);
   function check(tick) {if(run.hashes[tick]?.tick!==tick||run.hashes[tick]?.hash!==engine.stateHash())throw new Error(`Encounter first divergence at tick ${tick}: expected ${run.hashes[tick]?.hash}, actual ${engine.stateHash()}`);}
   check(0);
   for(let i=0;i<run.hashes.length-1;i++) {

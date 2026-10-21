@@ -8,7 +8,7 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "check": "npm run validate:handoff && npm test && npm run typecheck && npm run check:boundaries && npm run build && node --test tests/runtime/*.test.mjs tests/stage1/*.test.mjs",
+    "check": "npm run validate:handoff && npm test && npm run typecheck && npm run check:boundaries && npm run build && node --test tests/runtime/*.test.mjs tests/stage1/*.test.mjs tests/stage3/*.test.mjs",
     "validate:handoff": "node scripts/validate-handoff.mjs",
     "test": "node --test tests/handoff.test.mjs",
     "typecheck": "tsc --project tsconfig.json --noEmit && tsc --project tsconfig.browser.json --noEmit",
@@ -22,7 +22,10 @@
     "test:runtime": "npm run build:core && node --test tests/runtime/*.test.mjs",
     "demo": "npm run build && node dist/src/adapters/headless/cli.js demo",
     "replay": "npm run build:core && node dist/src/adapters/headless/cli.js replay",
-    "replay:encounter": "npm run build:core && node scripts/replay-encounter.mjs"
+    "replay:encounter": "npm run build:core && node scripts/replay-encounter.mjs",
+    "test:autonomy": "npm run build && node --test tests/stage3/*.test.mjs",
+    "demo:autonomy": "npm run build:core && node scripts/autonomous-demo.mjs",
+    "replay:autonomy": "npm run build:core && node scripts/replay-encounter.mjs"
   },
   "devDependencies": {
     "@types/node": "22.19.0",
