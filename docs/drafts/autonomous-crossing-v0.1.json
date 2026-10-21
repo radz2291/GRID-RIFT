@@ -1,0 +1,11 @@
+{
+  "status": "spec-only",
+  "id": "003-autonomous-crossing",
+  "version": "0.1.0",
+  "actors": {"hero":"body-p1","ownedAlly":"body-a1","raiders":["body-p2","body-p3"]},
+  "orders": ["defend","secure","follow"],
+  "timing": {"tickRateHz":20,"maxTicks":1800,"orderDeliveryTicks":2,"reportDeliveryTicks":4,"unitDecisionTicks":4,"unitReactionTicks":2},
+  "outcome": "defeat both raiders once; lose if both friendlies down; simultaneous draw; timeout draw",
+  "variants": ["crossing","blocked-route","flank"],
+  "excludes": ["construction","economy","peer hero control","network inference"]
+}
