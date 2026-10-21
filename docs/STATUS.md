@@ -30,7 +30,7 @@ See [Stage 1 verification](STAGE1-VERIFICATION.md) for current commands, accepta
 
 ## Current forward state · 21 October 2026
 
-Documentation alignment v0.3 follows baseline handoff `751d23b` and owner approval record `8a058ee`. Full exact lineage and actual alignment checks are in [documentation verification](DOCUMENTATION-ALIGNMENT-VERIFICATION.md). `CURRENT-DESIGN.md` is the authoritative forward specification; [decision 0004](decisions/0004-autonomous-warfare-full-cycle.md) records the owner amendment. No gameplay code or published experiment configuration is changed by the alignment.
+Documentation alignment v0.3 follows baseline handoff `751d23b` and owner approval record `8a058ee`. Full exact lineage and actual alignment checks are in [documentation verification](DOCUMENTATION-ALIGNMENT-VERIFICATION.md). `CURRENT-DESIGN.md` is the authoritative forward specification; [decision 0004](decisions/0004-autonomous-warfare-full-cycle.md) records the owner amendment. No gameplay code or published experiment configuration is changed by the alignment. Documentation alignment independently PASS at `a03231b79b181d62e4baafd65e072d53465c0abd`; manager regression suite 117/117 passed. This verdict does not complete 3A or any new gameplay stage.
 
 | Area | Current evidence state |
 | --- | --- |
