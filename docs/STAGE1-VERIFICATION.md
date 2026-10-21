@@ -43,3 +43,13 @@ The separate background automation tab was throttled near1FPS. This is retained 
 This is a small prototype using original simple geometry, three cover blockers and scripted AI. There is no active elevation/climbing, advanced fog memory, audio, touch/rebinding support, multiplayer, progression or3v3. Covers and routes need owner playtesting against the revised references. No trained/adaptive intelligence or validated human assessment is claimed.
 
 Review movement, targeting, readability, route trade-offs and pacing before adding Stage 2 content. The [implementation note](STAGE1-IMPLEMENTATION.md) defines the authored map, exact combat semantics, recovery, information boundary and compatibility scope.
+
+## Owner approval — 21 October 2026
+
+The owner explicitly accepted the Stage 1 playable experience: "Good, stage one is approved."
+
+Approved source: `c84e86c84f114bd45c9e8168f83af5790f579675`; experiment `000-vertical-slice@0.4.0`. This includes the reviewed continuous/ground/enemy orders, shared native facing for human and AI, raised shot geometry, compact HUD, centred Resume, outside-click menu dismissal, sight/fog of war, whole-building roof reveal and softened atmospheric fog treatment. The latest full suite passed 117 tests; detailed revision/browser evidence remains in [the controls record](STAGE1-CONTROLS.md).
+
+The experience-review gate is closed. Earlier pending-review language in this historical report and revision notes is superseded by this approval. Approval accepts the bounded Stage 1 prototype; it does not claim final art/balance, broad hardware coverage, trained intelligence or validated human assessment. Those limitations remain explicit.
+
+Stage 2's incremental two-lane 3v3 baseline is the next bounded milestone. It has not started as part of this approval record. This documentation-only change preserves the approved playable source and original run evidence.

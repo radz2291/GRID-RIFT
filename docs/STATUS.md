@@ -1,8 +1,8 @@
 # Implementation status
 
-21 October revision: experiment 0.4.0 adds simulation-owned facing for both human and AI Runners, with a public orientation component and private target IDs retained. Shot beams now align exactly between raised endpoints; pulse hits show local impacts. Earlier experiments remain intact. See [native combat facing](decisions/0003-native-combat-facing.md). Owner visual review remains open.
+**Stage 1 complete and owner-approved on 21 October 2026.** Approved playable source: `c84e86c84f114bd45c9e8168f83af5790f579675`, experiment 0.4.0. The owner stated: "Good, stage one is approved." See [approval and verification](STAGE1-VERIFICATION.md#owner-approval--21-october-2026).
 
-Updated: 20 October 2026. Stage 0 retained; Stage 1 implemented and tested. Experience and balance approval remain with the owner.
+Stage 0 is retained. Stage 1 includes the reviewed controls, HUD/pause menus, shared native human/AI facing, corrected shots, fog of war and refined roof/edge treatment. Latest combined suite: 117 passing tests. Final art, balance refinement, accessibility and wider hardware coverage remain later work; Stage 2 has not started.
 
 | Area | Status |
 | --- | --- |
@@ -23,21 +23,24 @@ Updated: 20 October 2026. Stage 0 retained; Stage 1 implemented and tested. Expe
 | Scripted tactical opponent | Contests, attacks, evades visible tells, retreats and recovers; policy and integration tests pass |
 | Browser performance evidence | Recorded on i7-6700 / GTX 1060 / Chromium155; foreground and background timing separated |
 | Learned policies, hosted inference, networking | Not implemented |
-| Human capability assessment or satisfying gameplay | Not established; no such claim is made |
+| Stage 1 playable experience | Owner-approved on 21 October 2026 |
+| Scientific human capability assessment | Not established; no such claim is made |
 
 See [Stage 1 verification](STAGE1-VERIFICATION.md) for current commands, acceptance evidence and limitations. [Stage 0 verification](STAGE0-VERIFICATION.md) and the [original handoff verification](VERIFICATION.md) remain historical records.
 
-## Next gate
+## Next milestone
 
-Stage 1 feedback revision adds continuous attack orders, attack-move, a hand cursor for camera panning, temporary keyboard camera peeks, and ability recharge bars. Experiment/human policy 0.2.0 preserves the original 0.1.0 definition and evidence. See [controls revision](STAGE1-CONTROLS.md). The battlefield remains a provisional test arena.
+Stage 2: develop the two-lane 3v3 baseline incrementally, beginning with teams/population, then waves/towers/core and relay trade-offs. Preserve the accepted Stage 1 controls, readability and runtime guarantees. See [roadmap](10-DEVELOPMENT-ROADMAP.md#stage-2--decision-depth).
 
-Owner plays the Stage 1 encounter and reviews controls, visibility, route choices, pacing and visual direction. Correct that experience before adding content. Stage 2 has not started; 3v3, lanes, towers and progression remain deferred.
+The Stage 1 experience-review gate is closed. This approval record does not implement or start Stage 2. The battlefield remains provisional rather than final production art.
 
 ## Open implementation choices
 
 Balance, terrain refinement, accessibility/rebinding and broader hardware/browser testing remain open. No Worker was needed for the measured small encounter. Stage 0's local numeric/checkpoint scope remains in [decision 0002](decisions/0002-stage0-runtime.md); Stage 1's authored map and mechanics are recorded in [the Stage 1 implementation note](STAGE1-IMPLEMENTATION.md).
 
 ## 21 October controls clarification
+
+Historical feedback notes follow. Their pending-review statements are superseded by the owner approval above; their original implementation/evidence context is retained.
 
 Click-directed orders use experiment/human policy 0.3.0: A + click an enemy locks pursuit; A + click ground stays tied to that area and stops when clear at the destination. Nearby automatic attacks no longer create permanent locks. Earlier 0.1.0/0.2.0 experiment definitions remain intact. See the controls revision for scope and evidence; Stage 1 experience review remains open.
 

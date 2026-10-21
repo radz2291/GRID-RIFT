@@ -2,7 +2,7 @@
 
 An outdoor science-fiction tactical simulation with replaceable rules, readable combat, and repeatable experiments.
 
-**Stage 1 playable encounter · 20 October 2026 · Ready for experience review.**
+**Stage 1 complete and owner-approved · 21 October 2026.**
 
 The first browser encounter is playable: one Runner against one local opponent in an outdoor arena with cover, line-of-sight, basic attacks, pulse shot, dash, relay capture, recovery, respawn, outcomes and restart. The simulation remains headless-capable. The later 3v3 and control-field scenarios remain specifications.
 
@@ -40,7 +40,7 @@ See [Stage 0 verification](docs/STAGE0-VERIFICATION.md) for acceptance evidence,
 
 ## Start here
 
-Read [CODEX_START.md](CODEX_START.md), then [AGENTS.md](AGENTS.md) and [current status](docs/STATUS.md). The original startup brief is retained as historical context. Stage 1 now awaits experience review before any Stage 2 expansion.
+Read [CODEX_START.md](CODEX_START.md), then [AGENTS.md](AGENTS.md) and [current status](docs/STATUS.md). The original startup brief is retained as historical context. Stage 1 is owner-approved; Stage 2 is the next milestone and has not started. The approval is recorded in [Stage 1 verification](docs/STAGE1-VERIFICATION.md).
 
 The first playable delivery is a small encounter with one human-controlled unit and one opponent. The later baseline is a 3v3, two-lane battlefield. A third specification removes lanes, towers, combat, and progression to test whether the architecture genuinely supports different rules.
 
