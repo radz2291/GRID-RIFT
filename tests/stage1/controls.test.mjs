@@ -58,7 +58,7 @@ test('integrated single attack selection chases, attacks, and stop cancels the s
   assert.equal(replayEncounter(g.exportRun(),false).finalHash,g.exportRun().finalHash);
 });
 test('new controls identity is recorded; unsampled attack-move/stop validation and pause discard are safe',()=>{
-  const g=createGame();assert.equal(g.exportRun().manifest.experimentVersion,'0.3.0');
+  const g=createGame();assert.equal(g.exportRun().manifest.experimentVersion,'0.4.0');
   assert.equal(g.command('control.attack-move',{x:26,z:24}).accepted,false);
   assert.equal(g.command('control.stop',{extra:1}).accepted,false);
   assert.equal(g.command('control.attack-move',{x:40,z:30}).accepted,true);

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { runnerYaw } from '../runner-facing.js';
+import { makeBeam, makeCombatTrace, SHOT_HEIGHT } from './combat-visuals.js';
 import type { Observation } from '../../../contracts/agent-interface.js';
 import type { ArenaMap, Point, TacticalEntity, TacticalWorld } from '../../../contracts/tactical-types.js';
 
@@ -137,8 +138,8 @@ export class Battlefield {
         const tell = this.ring(combat.pulseRadius, color, .09); tell.position.set(end.x, .08, end.z); this.dynamic.add(tell);
       }
     }
-    for (const p of combat.projectiles) { const ball = new THREE.Mesh(new THREE.SphereGeometry(combat.pulseRadius, 8, 6), new THREE.MeshBasicMaterial({ color: observation.controlledEntityIds.includes(p.ownerId) ? CYAN : AMBER })); ball.position.set(p.x, .8, p.z); this.dynamic.add(ball); }
-    for (const t of combat.traces) if (observation.tick - t.tick <= 3) this.dynamic.add(this.line(t.from, t.to, t.kind.includes('hit') ? 0xffffff : AMBER, .9));
+    for (const p of combat.projectiles) { const ball = new THREE.Mesh(new THREE.SphereGeometry(combat.pulseRadius, 8, 6), new THREE.MeshBasicMaterial({ color: observation.controlledEntityIds.includes(p.ownerId) ? CYAN : AMBER })); ball.position.set(p.x, SHOT_HEIGHT, p.z); this.dynamic.add(ball); }
+    for (const t of combat.traces) if (observation.tick - t.tick <= 3) this.dynamic.add(makeCombatTrace(t, observation.controlledEntityIds.includes(t.actorId) ? CYAN : AMBER));
     this.destination.visible = !!body?.destination; if (body?.destination) this.destination.position.set(body.destination.x, .06, body.destination.z);
     this.vision.visible = !!body && !this.reduced; if (body) this.vision.position.set(body.x, .04, body.z);
     const sel = entities.find(e => e.id === selectedId)?.components.movement; this.selected.visible = !!sel; if (sel) this.selected.position.set(sel.x, .06, sel.z);
@@ -155,8 +156,7 @@ export class Battlefield {
     this.drawMinimap(observation);
   }
   private line(a: Point, b: Point, color: number, opacity: number): THREE.Mesh {
-    const length = Math.hypot(b.x - a.x, b.z - a.z); const m = new THREE.Mesh(new THREE.PlaneGeometry(.08, length), new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide, depthWrite: false }));
-    m.rotation.x = -Math.PI / 2; m.rotation.z = -Math.atan2(b.x - a.x, b.z - a.z); m.position.set((a.x + b.x) / 2, .14, (a.z + b.z) / 2); return m;
+    return makeBeam(a,b,color,opacity);
   }
   private drawMinimap(observation: Observation): void {
     const c = document.querySelector<HTMLCanvasElement>('#minimap')!; const ctx = c.getContext('2d')!; const { world, entities } = publicView(observation); const map = world['world.planar'];

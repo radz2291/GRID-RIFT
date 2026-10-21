@@ -1,5 +1,7 @@
 # Implementation status
 
+21 October revision: experiment 0.4.0 adds simulation-owned facing for both human and AI Runners, with a public orientation component and private target IDs retained. Shot beams now align exactly between raised endpoints; pulse hits show local impacts. Earlier experiments remain intact. See [native combat facing](decisions/0003-native-combat-facing.md). Owner visual review remains open.
+
 Updated: 20 October 2026. Stage 0 retained; Stage 1 implemented and tested. Experience and balance approval remain with the owner.
 
 | Area | Status |

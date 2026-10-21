@@ -1,5 +1,7 @@
 # Stage 1 controls revision
 
+Latest: experiment 0.4.0 replaces human-only target-facing inference with native simulation-owned orientation for both teams. Basic shot geometry is raised and aligned; pulse hits use local impacts. See [decision 0003](decisions/0003-native-combat-facing.md). Earlier entries below document their original builds and evidence.
+
 20 October 2026. Experience feedback revision; Stage 2 has not started.
 
 ## Changes
@@ -57,3 +59,6 @@ Pausing now shows a prominent centred Resume encounter button with a dimmed batt
 
 Actual browser review confirmed centered Resume visibility/focus, one-click resume, menu opening, outside-click close and close after choosing Pause. Local screenshot evidence: runs/stage1-pause/paused.png. Owner review remains open.
 Verification: npm run check passed all 102 tests (27 handoff + 75 runtime/game), type checks, dependency boundaries and both builds. Actual browser checks also confirmed Escape dismisses the menu while remaining paused, a second Escape resumes, and the focused Resume button retains its bright background. Browser warning/error log was empty. Full output: runs/stage1-pause-check.log.
+
+Native-facing/shot review evidence: the actual utility-policy AI fired during a browser encounter at tick 263. The local export records experiment 0.4.0 and both bodies' simulation-owned orientation; runs/stage1-native-shots/shots.png shows a raised cyan basic beam joining the two Runners, with the AI facing back toward its opponent. runs/stage1-native-shots/encounter.json retains the browser record. Its authoritative inputs/events/hashes replayed under the reviewed current mechanics with source-identity enforcement disabled because test/source metadata changed after that browser bundle was built; it is not claimed as a strict matching-source replay. Automated integration tests separately replay native facing and check snapshot continuation. Browser warning/error log was empty. Owner review of comfort and shot readability remains open.
+Final verification: npm run check passed all 111 tests (28 handoff + 83 runtime/game), with type checks, boundaries and both builds. The additional regression verifies that an actual hit during dash takes aim priority on the shot tick, then travel facing resumes. Full output: runs/stage1-native-shots-final-check.log. Eight-direction geometry checks, actual AI/replay, hidden-target protection and checkpoint continuation pass.

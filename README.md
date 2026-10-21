@@ -72,7 +72,7 @@ npm run check
 | [Status](docs/STATUS.md) | What exists, what is proposed, what is untested |
 | [References](docs/REFERENCES.md) | Primary technical references and verification notes |
 
-`contracts/` holds shared boundaries and module-specific tactical view types. `fixtures/stage0.json` still selects the Stage 0 proof. The game composes the six implemented modules selected by `000-vertical-slice`; the isolated Stage 0 CLI retains its smaller registry. Handoff, Stage 0 and Stage 1 tests remain separate.
+`contracts/` holds shared boundaries and module-specific tactical view types. `fixtures/stage0.json` still selects the Stage 0 proof. The game composes the seven implemented modules selected by `000-vertical-slice@0.4.0` (including shared combat orientation); the isolated Stage 0 CLI retains its smaller registry. Handoff, Stage 0 and Stage 1 tests remain separate.
 
 ## Non-negotiable separation
 

@@ -4,7 +4,7 @@ import { createGame } from '../../dist/src/game/session.js';
 import { runnerYaw } from '../../dist/src/adapters/runner-facing.js';
 
 function actors() {
- const own=createGame().observe().entities[0];
+ const own=createGame().observe().entities[0]; delete own.components.orientation; // Legacy observations without native facing.
  Object.assign(own.components.movement,{x:40,z:30,facingX:-1,facingZ:0,destination:null});
  own.components.combat.targetId='enemy';
  const enemy=structuredClone(own);enemy.id='enemy';enemy.components.movement.x=45;

@@ -27,6 +27,10 @@
         }
       }
     },
+    "orientation.combat": {
+      "version": "0.1.0", "status": "spec-only", "dependencies": ["world.planar", "movement.planar", "perception.radius-los", "combat.runner"], "provides": [],
+      "configSchema": {"type":"object", "additionalProperties":false, "required":[], "properties":{}}
+    },
     "objective.relay": {
       "version": "0.1.0", "status": "spec-only", "dependencies": ["world.planar", "movement.planar"], "provides": ["objective"],
       "requiresTeamAssignments": true,

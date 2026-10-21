@@ -4,6 +4,8 @@ import type { TacticalEntity } from '../../contracts/tactical-types.js';
 export function runnerYaw(entity:TacticalEntity, visibleEntities:readonly TacticalEntity[]):number {
   const body=entity.components.movement, unit=entity.components.combat;
   if(!body)return 0;
+  const native=entity.components.orientation;
+  if(native)return Math.atan2(-native.facingX,-native.facingZ);
   const movementYaw=Math.atan2(-body.facingX,-body.facingZ);
   if(!unit?.alive||body.dash)return movementYaw;
   // A confirmed pulse has its own aim. A newer movement order takes precedence over a basic target.

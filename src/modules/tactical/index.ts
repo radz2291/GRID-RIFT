@@ -261,6 +261,26 @@ combat.advance = (s, commands, _cfg, c) => {
     return json(state);
 };
 combat.project = (s, id, c) => { const state = s as unknown as FightState, bodies = moves(c).bodies; return { world: json({ projectiles: state.projectiles.filter(p => { const owner = bodies.find(b => b.id === p.ownerId)!; return visibleBody(owner, id, c) && visiblePoint(p, id, c); }), traces: state.traces.filter(t => visiblePoint(t.from, id, c) && visiblePoint(t.to, id, c)), basicRange: state.config.basicRange, pulseRange: state.config.pulseRange, pulseRadius: state.config.pulseRadius, dashDistance: state.config.dashDistance, pulseCooldownTicks: state.config.pulseCooldownTicks, dashCooldownTicks: state.config.dashCooldownTicks }), entities: state.units.filter(u => visibleBody(bodies.find(b => b.id === u.id)!, id, c)).map(u => ({ id: u.id, components: json({ combat: bodies.find(b => b.id === u.id)!.controllerId === id ? u : { id: u.id, hp: u.hp, maxHp: u.maxHp, alive: u.alive, windup: u.windup } }) })) }; };
+// Shared simulation-owned facing. Target IDs stay private; observers receive only visible body orientation.
+type FacingState = { bodies: { id:string; facingX:number; facingZ:number; lastX:number; lastZ:number }[] };
+const orientation = base('orientation.combat', 'effects', ['world.planar', 'movement.planar', 'perception.radius-los', 'combat.runner'], obj({}), obj({ bodies:arr(obj({id:str,facingX:num,facingZ:num,lastX:num,lastZ:num})) }));
+orientation.initial = (_cfg,c) => json({bodies:moves(c).bodies.map(b=>({id:b.id,facingX:b.facingX,facingZ:b.facingZ,lastX:b.x,lastZ:b.z}))});
+orientation.advance = (s,_commands,_cfg,c) => {
+    const state=structuredClone(s) as unknown as FacingState, combat=fight(c)!;
+    for(const facing of state.bodies) {
+        const body=moves(c).bodies.find(b=>b.id===facing.id)!,unit=combat.units.find(u=>u.id===facing.id)!;
+        const moved=Math.hypot(body.x-facing.lastX,body.z-facing.lastZ)>1e-8;
+        const hit=combat.traces.find(t=>t.actorId===body.id&&t.kind==='basic'&&t.tick===c.tick);
+        const target=moves(c).bodies.find(b=>b.id===unit.targetId);
+        const aimingTarget=target&&combat.units.find(u=>u.id===target.id)?.alive&&distance(body,target)<=combat.config.basicRange!&&visibleBody(target,body.controllerId,c)?target:undefined;
+        const aim=unit.windup??(hit?hit.to:!body.dash&&!moved&&!body.destination?aimingTarget:undefined);
+        if(!unit.alive||(!aim&&(body.dash||moved))){facing.facingX=body.facingX;facing.facingZ=body.facingZ;}
+        else if(aim){const dx=aim.x-body.x,dz=aim.z-body.z,d=Math.hypot(dx,dz);if(d>1e-8){facing.facingX=dx/d;facing.facingZ=dz/d;}}
+        facing.lastX=body.x;facing.lastZ=body.z;
+    }
+    return json(state);
+};
+orientation.project = (s,id,c) => ({world:{},entities:(s as unknown as FacingState).bodies.filter(f=>visibleBody(moves(c).bodies.find(b=>b.id===f.id)!,id,c)).map(f=>({id:f.id,components:json({orientation:{facingX:f.facingX,facingZ:f.facingZ}})}))});
 const relaySchema = obj({ x: num, z: num, radius: positive, owner: nullable(str), capturing: nullable(str), progress: integer, captureTicks: positiveInt, contested: bool, scores: { type: 'object', additionalProperties: integer }, scoreToWin: positiveInt });
 const objective = base('objective.relay', 'termination', ['world.planar', 'movement.planar', 'combat.runner'], obj({ zoneCount: { const: 1 }, radius: positive, captureTicks: positiveInt, scorePerTick: positiveInt, requirePresence: { const: true } }), relaySchema);
 objective.descriptor = { ...objective.descriptor, reads: ['world.planar', 'movement.planar', 'combat.runner', 'rules.relay-score'] };
@@ -305,4 +325,4 @@ rules.advance = (s, _commands, cfg, c) => { const scores = (c.states['objective.
     winners = Object.keys(scores).filter(t => scores[t] === best).sort();
 } const draw = winners.length !== 1; c.finish(draw ? { kind: 'draw', tick, reason: limit ? 'timeout' : 'score', scores } : { kind: 'finished', tick, winners, reason: limit ? 'timeout' : 'score', scores }); return { ...s, terminal: draw ? 'draw' : 'finished', winners: draw ? [] : winners }; };
 rules.project = s => ({ world: { terminal: s.terminal!, winners: s.winners! }, entities: [] });
-export const tacticalModules: RuntimeModule[] = [world, perception, movement, combat, objective, rules];
+export const tacticalModules: RuntimeModule[] = [world, perception, movement, combat, orientation, objective, rules];

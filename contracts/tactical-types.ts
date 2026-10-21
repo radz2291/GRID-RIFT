@@ -27,7 +27,7 @@ export interface RelayView extends Point {
 }
 export interface TacticalEntity {
   id: string;
-  components: { movement?: MovementBody; combat?: CombatUnit };
+  components: { movement?: MovementBody; combat?: CombatUnit; orientation?: { facingX:number; facingZ:number } };
 }
 /** Each module's public projection is namespaced by module ID in Observation.world. */
 export interface TacticalWorld {

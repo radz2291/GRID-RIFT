@@ -1,4 +1,4 @@
-import specification from '../../experiments/000-vertical-slice-click-orders.json' with {type:'json'};
+import specification from '../../experiments/000-vertical-slice-facing.json' with {type:'json'};
 import envelope from '../../contracts/experiment.schema.json' with {type:'json'};
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import type { ActionIntent, JsonObject, Observation } from '../../contracts/agent-interface.js';
