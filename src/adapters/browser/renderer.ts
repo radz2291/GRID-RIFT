@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { runnerYaw } from '../runner-facing.js';
 import { makeBeam, makeCombatTrace, SHOT_HEIGHT } from './combat-visuals.js';
+import { sightMask } from '../sight-mask.js';
+import { shadeBySight } from './sight-shading.js';
 import type { Observation } from '../../../contracts/agent-interface.js';
 import type { ArenaMap, Point, TacticalEntity, TacticalWorld } from '../../../contracts/tactical-types.js';
 
@@ -27,7 +29,13 @@ export class Battlefield {
   private relay = new THREE.Group();
   private destination: THREE.Mesh;
   private aim = new THREE.Group();
-  private vision: THREE.Mesh;
+  private sightColumns = 160;
+  private sightRows = 120;
+  private sightData = new Uint8Array(this.sightColumns*this.sightRows);
+  private sightTexture = new THREE.DataTexture(this.sightData,this.sightColumns,this.sightRows,THREE.RedFormat);
+  private sightMapSize = new THREE.Vector2(80,60);
+  private sightMapCanvas = document.createElement('canvas');
+  private sightKey = '';
   private selected: THREE.Mesh;
   private reduced = false;
   private observation?: Observation;
@@ -43,7 +51,8 @@ export class Battlefield {
     this.scene.add(this.dynamic, this.relay, this.aim);
     this.destination = this.ring(.65, CYAN, .075); this.destination.visible = false; this.scene.add(this.destination);
     this.selected = this.ring(1, AMBER, .1); this.selected.visible = false; this.scene.add(this.selected);
-    this.vision = this.ring(18, CYAN, .022, .15); this.scene.add(this.vision);
+    this.sightTexture.minFilter=THREE.LinearFilter;this.sightTexture.magFilter=THREE.LinearFilter;
+    this.sightMapCanvas.width=this.sightColumns;this.sightMapCanvas.height=this.sightRows;
     this.resize(); window.addEventListener('resize', () => this.resize());
   }
   private sky(): THREE.CanvasTexture {
@@ -52,7 +61,7 @@ export class Battlefield {
     g.addColorStop(0, '#233247'); g.addColorStop(.48, '#7b8696'); g.addColorStop(.77, '#d8b39a'); g.addColorStop(1, '#758a96'); x.fillStyle = g; x.fillRect(0, 0, 4, 512);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
   }
-  private material(color: number, metalness = .05): THREE.MeshStandardMaterial { return new THREE.MeshStandardMaterial({ color, roughness: .86, metalness }); }
+  private material(color: number, metalness = .05): THREE.MeshStandardMaterial { const material=new THREE.MeshStandardMaterial({ color, roughness: .86, metalness }); shadeBySight(material,this.sightTexture,this.sightMapSize); return material; }
   private box(w: number, h: number, d: number, color: number): THREE.Mesh { return new THREE.Mesh(new THREE.BoxGeometry(w, h, d), this.material(color)); }
   private ring(radius: number, color: number, width: number, opacity = .85): THREE.Mesh {
     const m = new THREE.Mesh(new THREE.RingGeometry(radius - width, radius + width, 80), new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide, depthWrite: false })); m.rotation.x = -Math.PI / 2; m.position.y = .035; return m;
@@ -117,6 +126,7 @@ export class Battlefield {
     if (updateKey === this.updateKey) return;
     this.updateKey = updateKey;
     this.observation = observation; const { world, entities } = publicView(observation); const map = world['world.planar']; if (!this.map) this.buildMap(map);
+    this.updateSight(observation);
     const me = entities.find(e => observation.controlledEntityIds.includes(e.id)); const body = me?.components.movement;
     for (const actor of this.actors.values()) actor.visible = false;
     for (const entity of entities) {
@@ -141,7 +151,6 @@ export class Battlefield {
     for (const p of combat.projectiles) { const ball = new THREE.Mesh(new THREE.SphereGeometry(combat.pulseRadius, 8, 6), new THREE.MeshBasicMaterial({ color: observation.controlledEntityIds.includes(p.ownerId) ? CYAN : AMBER })); ball.position.set(p.x, SHOT_HEIGHT, p.z); this.dynamic.add(ball); }
     for (const t of combat.traces) if (observation.tick - t.tick <= 3) this.dynamic.add(makeCombatTrace(t, observation.controlledEntityIds.includes(t.actorId) ? CYAN : AMBER));
     this.destination.visible = !!body?.destination; if (body?.destination) this.destination.position.set(body.destination.x, .06, body.destination.z);
-    this.vision.visible = !!body && !this.reduced; if (body) this.vision.position.set(body.x, .04, body.z);
     const sel = entities.find(e => e.id === selectedId)?.components.movement; this.selected.visible = !!sel; if (sel) this.selected.position.set(sel.x, .06, sel.z);
     if (body && (sel || (pointer && this.hit(pointer)))) { const range = this.ring(combat.basicRange, CYAN, .035, .45); range.position.set(body.x, .055, body.z); this.dynamic.add(range); }
     for (const child of [...this.aim.children]) { this.aim.remove(child); if (child instanceof THREE.Mesh) { child.geometry.dispose(); if (child.material instanceof THREE.Material) child.material.dispose(); } }
@@ -158,10 +167,20 @@ export class Battlefield {
   private line(a: Point, b: Point, color: number, opacity: number): THREE.Mesh {
     return makeBeam(a,b,color,opacity);
   }
+  private updateSight(observation:Observation):void {
+    const {world,entities}=publicView(observation),map=world['world.planar'],radius=world['perception.radius-los'].radius;
+    const sources=entities.filter(e=>observation.controlledEntityIds.includes(e.id)&&e.components.combat?.alive&&e.components.movement).map(e=>({x:e.components.movement!.x,z:e.components.movement!.z}));
+    const key=JSON.stringify([map.mapVersion,radius,sources]);if(key===this.sightKey)return;this.sightKey=key;
+    this.sightMapSize.set(map.width,map.depth);sightMask(map,sources,radius,this.sightColumns,this.sightRows,this.sightData);this.sightTexture.needsUpdate=true;
+    const context=this.sightMapCanvas.getContext('2d')!,image=context.createImageData(this.sightColumns,this.sightRows);
+    for(let i=0;i<this.sightData.length;i++){image.data[i*4]=4;image.data[i*4+1]=9;image.data[i*4+2]=18;image.data[i*4+3]=Math.round((255-this.sightData[i]!)*.7);}
+    context.putImageData(image,0,0);
+  }
   private drawMinimap(observation: Observation): void {
     const c = document.querySelector<HTMLCanvasElement>('#minimap')!; const ctx = c.getContext('2d')!; const { world, entities } = publicView(observation); const map = world['world.planar'];
     ctx.fillStyle = '#152a34'; ctx.fillRect(0, 0, c.width, c.height); const sx = c.width / map.width, sz = c.height / map.depth;
     ctx.fillStyle = '#71878b'; for (const b of map.blockers) ctx.fillRect((b.x - b.w / 2) * sx, (b.z - b.d / 2) * sz, b.w * sx, b.d * sz);
+    ctx.drawImage(this.sightMapCanvas,0,0,c.width,c.height);
     ctx.strokeStyle = '#eab177'; ctx.beginPath(); ctx.arc(map.relay.x * sx, map.relay.z * sz, 5 * sx, 0, Math.PI * 2); ctx.stroke();
     for (const e of entities) { const m = e.components.movement; if (!m || !e.components.combat?.alive) continue; const friendly = observation.controlledEntityIds.includes(e.id); ctx.fillStyle = friendly ? '#7fe5eb' : '#eab177'; const x = m.x * sx, y = m.z * sz; ctx.beginPath(); if (friendly) { ctx.moveTo(x, y - 5); ctx.lineTo(x + 4, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 4, y); } else { ctx.moveTo(x, y - 5); ctx.lineTo(x + 5, y + 4); ctx.lineTo(x - 5, y + 4); } ctx.closePath(); ctx.fill(); }
   }

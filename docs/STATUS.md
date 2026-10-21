@@ -46,3 +46,5 @@ Stationary attack facing is corrected in presentation: the Runner model turns to
 The Stage 1 HUD now follows compact edge positioning: minimap bottom-left, health/abilities bottom-centre, score top-centre, with utility actions/help in collapsed menus. Existing simulation and experiments are unchanged. Browser layout/menu review is complete at 1280 x 720; owner approval of readability and screen clarity remains open.
 
 Pause usability: a centred Resume encounter button appears whenever a started encounter is paused. Menu/Controls panels now dismiss on outside clicks; menu actions close the menu. Actual browser checks passed; simulation and experiment identities remain unchanged.
+
+Stage 1 sight readability: known terrain outside current sight and behind cover is now shaded in the battlefield and minimap, including reduced-effects mode. Exact enemy visibility rules are unchanged. This is current-sight fog, not exploration memory. Owner visual review remains open.
