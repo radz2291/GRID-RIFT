@@ -35,10 +35,19 @@ renderer.effects(reduced);
 el('effects').setAttribute('aria-pressed', String(reduced));
 function notice(message: string): void { el('notice').textContent = message; noticeUntil = performance.now() + 2600; el('notice').classList.add('show'); }
 function cancelAim(): void { targeting = false; attackMoving = false; el('aim-label').hidden = true; el('pulse').classList.remove('targeting'); controls(); }
+function closeMenus(): void { document.querySelectorAll<HTMLDetailsElement>('.game-menu, .controls-help').forEach(menu => { menu.open = false; }); }
+document.addEventListener('pointerdown', e => {
+  document.querySelectorAll<HTMLDetailsElement>('.game-menu, .controls-help').forEach(menu => { if (e.target instanceof Node && !menu.contains(e.target)) menu.open = false; });
+}, true);
+document.addEventListener('click', e => { if (e.target instanceof Element && e.target.closest('.game-menu button')) closeMenus(); });
 function setRunning(value: boolean, pauseReason = 'manual'): void {
   if (!value && running) pauseEvents.push({ tick: observation.tick, reason: pauseReason });
   running = value; accumulated = 0; last = performance.now(); game.discardInput(); pendingInputAt = null; cancelAim();
   el('pause').textContent = value ? 'Pause' : 'Resume';
+  el('pause-overlay').hidden = value || !started || ended;
+  closeMenus();
+  if (!value) resetCameraControls();
+  if (!value && started && !ended && pauseReason === 'manual' && document.hasFocus()) el('resume-center').focus({ preventScroll: true });
   if (started && !ended) notice(value ? 'Encounter resumed' : 'Paused — press Escape or Resume to continue');
 }
 function command(kind: string, payload: JsonObject): void {
@@ -58,6 +67,7 @@ function preparePulse(): void { if (!running) { notice('Start or resume the enco
 function dash(): void { if (!pointer) { notice('Point at open ground, then press W'); return; } command('combat.cast', { ability: 'dash', x: pointer.x, z: pointer.z }); cancelAim(); }
 el('start').addEventListener('click', () => { if (ended) restart(); started = true; el('overlay').hidden = true; setRunning(true); });
 el('pause').addEventListener('click', () => { if (!started || ended) return; setRunning(!running); });
+el('resume-center').addEventListener('click', () => { if (!started || ended) return; setRunning(true); canvas.focus({ preventScroll: true }); });
 function restart(): void { game.restart(); frameTimes.length = 0; stepTimes.length = 0; inputWaits.length = 0; pauseEvents.length = 0; observation = game.observe(); started = true; ended = false; selectedId = null; receiptKey = ''; el('overlay').hidden = true; setRunning(true); center(); notice('New encounter — claim the central relay'); }
 el('restart').addEventListener('click', restart);
 function exportRun(): void {
@@ -93,7 +103,7 @@ window.addEventListener('keydown', e => {
   if (e.code === 'KeyQ') preparePulse(); else if (e.code === 'KeyW') dash(); else if (e.code === 'Space') center();
   else if (e.code === 'KeyA') { if (!running) { notice('Start or resume the encounter first'); return; } cancelAim(); attackMoving = true; controls(); }
   else if (e.code === 'KeyS') { command('control.stop', {}); selectedId = null; cancelAim(); }
-  else if (e.code === 'Escape') { if (targeting || attackMoving) cancelAim(); else if (started && !ended) setRunning(!running); }
+  else if (e.code === 'Escape') { if (document.querySelector('.game-menu[open], .controls-help[open]')) closeMenus(); else if (targeting || attackMoving) cancelAim(); else if (started && !ended) setRunning(!running); }
 });
 window.addEventListener('keyup', e => { if (e.code.startsWith('Shift')) grip = e.shiftKey; cameraKeys.delete(e.code); controls(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { resetCameraControls(); if (running) setRunning(false, 'tab-hidden'); } });

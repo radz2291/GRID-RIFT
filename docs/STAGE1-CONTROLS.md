@@ -50,3 +50,10 @@ Reference: Valve's official HUD overview, https://www.dota2.com/700/hud/ , empha
 
 Browser review at 1280 x 720 confirmed bottom-left map, centred hero panel, no panel overlap, readable abilities, expandable menu/help and working Pause. New local evidence: runs/stage1-hud/hud.png. Broader viewport and hardware acceptance remain open.
 Verification: npm run check passed all 102 tests (27 handoff + 75 runtime/game), type checks, boundaries and both builds. Browser checks additionally confirmed Space opens Menu, utility buttons remain labelled and functional, and the console/map rectangles do not overlap. Browser error/warning log was empty. Full output: runs/stage1-hud-check.log.
+
+## Pause and menu usability - 21 October 2026
+
+Pausing now shows a prominent centred Resume encounter button with a dimmed battlefield behind it. It appears for manual and automatic pauses, stays absent before starting/after completion, and clears on resume/restart. Manual pause focuses the Resume button; clicking it restores battlefield keyboard focus. Camera grip/peek keys clear on pause. Menus close on outside pointer clicks, menu actions and state changes; Escape dismisses an open menu before toggling pause. The Controls panel shares the outside-click behavior. Simulation commands, timing rules and experiment identities remain unchanged.
+
+Actual browser review confirmed centered Resume visibility/focus, one-click resume, menu opening, outside-click close and close after choosing Pause. Local screenshot evidence: runs/stage1-pause/paused.png. Owner review remains open.
+Verification: npm run check passed all 102 tests (27 handoff + 75 runtime/game), type checks, dependency boundaries and both builds. Actual browser checks also confirmed Escape dismisses the menu while remaining paused, a second Escape resumes, and the focused Resume button retains its bright background. Browser warning/error log was empty. Full output: runs/stage1-pause-check.log.
