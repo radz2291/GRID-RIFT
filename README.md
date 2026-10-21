@@ -2,7 +2,7 @@
 
 Current development: autonomous crossing candidate on `design/stage3a-autonomous-warfare`. Run `npm ci` then `npm run dev`; the browser defaults to the new skirmish. The approved Stage 1 relay duel remains at `http://127.0.0.1:4173/?scenario=duel`. See [autonomous controls and scope](docs/STAGE3B-IMPLEMENTATION.md) and [live status](docs/STATUS.md) for verification and owner-review gates.
 
-A hero-led autonomous warfare simulation: fight as your hero, lead autonomous forces through high-level intent, and shape an outdoor strategic battlefield. This is the approved forward direction; the current runnable build remains the Stage 1 relay duel.
+A hero-led autonomous warfare simulation: fight as your hero, lead autonomous forces through high-level intent, and shape an outdoor strategic battlefield. This is the approved forward direction; the current development build adds the autonomous crossing skirmish and retains the approved Stage 1 relay duel.
 
 **Stage 1 complete and owner-approved · 21 October 2026.**
 
@@ -17,7 +17,7 @@ npm run dev
 
 Open [the local game](http://127.0.0.1:4173) and choose **Start encounter**. Keep the terminal running; Ctrl+C stops the server. The server listens only on your own computer. Desktop mouse and keyboard plus WebGL are required. There is no account, paid service, or automatic upload.
 
-Click a visible rival once (left or right button) to chase and keep attacking. Right-click open ground to move; nearby rivals are attacked when you arrive. A then left-click ground engages nearby visible rivals around that point and stops when clear; A then click a rival locks pursuit onto that rival. S stops movement and automatic attacks. Q then left-click fires a pulse; W dashes toward the cursor. Ability bars refill until READY. Escape cancels targeting or pauses. Space centres the camera; wheel zooms. Shift + left-drag or middle-drag pans with a hand cursor. Hold Z / X to peek sideways or C for a higher angle; release to return to the default angle. Hold the relay uncontested to reach 600 points. Retreat to your marked spawn ring to recover health.
+Click a visible rival once (left or right button) to chase and keep attacking. Right-click open ground to move; nearby rivals are attacked when you arrive. A then left-click ground engages nearby visible rivals around that point and stops when clear; A then click a rival locks pursuit onto that rival. S stops movement and automatic attacks. Q then left-click fires a pulse; W dashes toward the cursor. Ability bars refill until READY. Escape cancels targeting or pauses. Space centres the camera; wheel zooms. Shift + left-drag or middle-drag pans with a hand cursor. Hold Z / X to peek sideways or C for a higher angle; release to return to the default angle. In the retained relay duel, hold the relay uncontested to reach 600 points. In the default crossing, T selects your ally: D then click defends, E then click secures, F follows, R cancels; defeat both raiders within 90 seconds. Retreat to your marked spawn ring to recover health.
 
 Bright terrain shows current sight; shaded terrain is outside range or behind cover, where rivals can be hidden. The minimap shows the same boundary. The map layout remains known.
 
@@ -44,7 +44,7 @@ See [Stage 0 verification](docs/STAGE0-VERIFICATION.md) for acceptance evidence,
 
 Read [CODEX_START.md](CODEX_START.md), [AGENTS.md](AGENTS.md), [current status](docs/STATUS.md), [current design](docs/CURRENT-DESIGN.md) and [current handoff](CURRENT_CODEX_HANDOFF.md). The [full development cycle](docs/DEVELOPMENT-CYCLE.md) gives one local manager responsibility through independent verification, repairs, playable review and delivery.
 
-Next: reconcile any Stage 2 work, complete Stage 3A autonomous-command contracts, then build Stage 3B's hero plus autonomous ally. Future strategic construction, resources, core outcomes and independent hero peers are specified in the [roadmap](docs/10-DEVELOPMENT-ROADMAP.md), not implemented yet. The legacy two-lane experiment and noncombat architecture test remain preserved.
+Stage 3A contracts passed independent review. The integrated Stage 3B hero plus autonomous ally is undergoing technical and browser verification before owner experience review. Future strategic construction, resources, core outcomes and independent hero peers are specified in the [roadmap](docs/10-DEVELOPMENT-ROADMAP.md), not implemented yet. The legacy two-lane experiment and noncombat architecture test remain preserved.
 
 ## Check the handoff
 
@@ -55,7 +55,7 @@ npm ci
 npm run check
 ```
 
-`check` validates documents and experiments, retains the 25 handoff regression tests, type-checks source and browser adapters separately, enforces dependency boundaries, builds both outputs, and runs Stage 0 and Stage 1 tests. GitHub Actions runs the same command. [The original handoff record](docs/VERIFICATION.md) remains historical evidence.
+`check` validates documents and experiments, retains the handoff regression tests, type-checks source and browser adapters separately, enforces dependency boundaries, builds both outputs, and runs Stage 0, Stage 1 and autonomous-command tests. GitHub Actions runs the same command. [The original handoff record](docs/VERIFICATION.md) remains historical evidence.
 
 ## Document map
 
