@@ -1,4 +1,4 @@
-import fixture from '../../fixtures/autonomous-crossing.json' with {type:'json'};
+import fixture from '../../fixtures/autonomous-crossing-feedback.json' with {type:'json'};
 import type { AgentPolicy, JsonObject } from '../../contracts/agent-interface.js';
 import type { CommandView, Order } from '../../contracts/autonomy.js';
 import type { Point } from '../../contracts/tactical-types.js';
@@ -29,7 +29,7 @@ export interface AutonomousGame extends GameSession {
 }
 export function createAutonomousGame(browserMetadata:JsonObject={},variant:CrossingVariant='crossing'):AutonomousGame {
   const config=autonomousConfig(variant),policies=autonomousPolicies();
-  const version=variant==='crossing'?'0.1.0':variant==='blocked-route'?'0.1.1':'0.1.2';
+  const version=variant==='crossing'?'0.2.0':variant==='blocked-route'?'0.2.1':'0.2.2';
   const content={...clone(fixture),version,modules:config.modules} as unknown as JsonObject;
   const policyIdentities=Object.fromEntries(fixture.controllers.map(c=>[c.id,{id:c.policyId,version:c.policyVersion}]));
   const session=createGameSession({config,modules:autonomousModules,policies,content,id:fixture.id,version,
@@ -41,6 +41,9 @@ export function createAutonomousGame(browserMetadata:JsonObject={},variant:Cross
       const view=session.observe(),command=view.world['command.owned'] as unknown as CommandView;
       const grant=command.grants.find(g=>g.commanderId===view.controllerId);
       if(!grant)return {accepted:false,reason:'no-owned-unit'};
+      const me=view.entities.find(e=>view.controlledEntityIds.includes(e.id));
+      if((me?.components.combat as unknown as {alive:boolean}|undefined)?.alive===false)return {accepted:false,reason:'dead'};
+      if(command.unavailableUnitIds?.includes(grant.unitId))return {accepted:false,reason:'dead-unit'};
       const current=command.orders.find(o=>o.unitId===grant.unitId);
       const key=`${grant.unitId}/${grant.generation}`;
       const revision=Math.max(revisions[key]??0,current?.revision??0)+1;

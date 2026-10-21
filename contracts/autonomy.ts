@@ -8,7 +8,7 @@ export interface Order {
 export interface Grant {unitId:string;unitControllerId:string;commanderId:string;commanderActorId:string;generation:number}
 export interface ActiveOrder extends Order {issuedTick:number;effectiveTick:number;status:'pending'|'active'|'cancelled'|'expired'|'revoked'|'dead'}
 export interface UnitReport {unitId:string;generation:number;revision:number;mode:string;observedTick:number;deliveredTick:number;x:number;z:number;hp:number;alive:boolean}
-export interface CommandView {grants:Grant[];orders:ActiveOrder[];reports:UnitReport[];leaders:UnitReport[];deliveryTicks:number;reportTicks:number}
+export interface CommandView {grants:Grant[];orders:ActiveOrder[];reports:UnitReport[];leaders:UnitReport[];unavailableUnitIds?:string[];deliveryTicks:number;reportTicks:number}
 /** Called only on an already authorized same-unit batch. Stable tie retains command order. */
 export function winningOrder(orders:readonly Order[]):Order|undefined {
   return [...orders].sort((a,b)=>b.revision-a.revision||Number(b.kind==='cancel')-Number(a.kind==='cancel'))[0];

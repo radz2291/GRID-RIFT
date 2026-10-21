@@ -9,7 +9,7 @@ import {autonomousModules} from '../dist/src/modules/autonomy.js';
 import {utilityPolicy} from '../dist/src/agents/tactical.js';
 const variant=process.argv[2]??'crossing',config=autonomousConfig(variant);
 const policies={...autonomousPolicies(),p1:utilityPolicy};
-const content={...JSON.parse(readFileSync('fixtures/autonomous-crossing.json','utf8')),id:`003-autonomous-crossing-headless-${variant}`,version:'0.1.0',modules:config.modules,
+const content={...JSON.parse(readFileSync('fixtures/autonomous-crossing-feedback.json','utf8')),id:`003-autonomous-crossing-headless-${variant}`,version:'0.2.0',modules:config.modules,
   controllers:config.controllers.map(c=>({...c,policyId:policies[c.id].identity.id,policyVersion:policies[c.id].identity.version}))};
 const manifest={runId:`autonomous-${variant}-${Date.now()}`,schemaVersion:'0.1.0',apiVersion:'grid-rift/v0',experimentId:content.id,
   experimentVersion:content.version,experimentHash:hash(content),expandedConfiguration:content,seed:config.seed,...sourceIdentity(),

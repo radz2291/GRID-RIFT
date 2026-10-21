@@ -67,3 +67,14 @@ test('crossing kills latch through respawn, friendly loss and simultaneous finis
   for(const mode of ['win','loss','both']){const e=engine();edit(e,s=>{for(const u of s['combat.runner'].units)if(mode==='both'||(mode==='win'?['body-p2','body-p3']:['body-p1','body-a1']).includes(u.id)){u.alive=false;u.respawnTick=100;}});e.step([]);assert.equal(e.snapshot().terminal.kind,mode==='both'?'draw':'finished');if(mode!=='both')assert.deepEqual(e.snapshot().terminal.winners,[mode==='win'?'alpha':'beta']);}
   const e=engine();edit(e,s=>{const u=s['combat.runner'].units.find(u=>u.id==='body-p2');u.alive=false;u.respawnTick=2;});step(e,3);assert.ok(e.snapshot().moduleStates['rules.crossing'].defeated.includes('body-p2'));assert.equal(e.snapshot().moduleStates['objective.relay'].scores.alpha,0);
 });
+
+test('B-05 rebuilding availability is private, checkpointed and clears after respawn',()=>{
+  const e=engine();edit(e,s=>{const u=s['combat.runner'].units.find(u=>u.id==='body-a1');u.alive=false;u.hp=0;u.respawnTick=8;});e.step([]);
+  assert.deepEqual(e.observe('p1').world['command.owned'].unavailableUnitIds,['body-a1']);
+  assert.deepEqual(e.observe('p2').world['command.owned'].unavailableUnitIds,[]);
+  assert.deepEqual(e.observe('p1').world['command.owned'].reports,[]);
+  const restored=engine();restored.restore(e.snapshot());
+  for(let i=0;i<10;i++){e.step([]);restored.step([]);assert.equal(e.stateHash(),restored.stateHash());}
+  assert.deepEqual(e.observe('p1').world['command.owned'].unavailableUnitIds,[]);
+  assert.equal(state(e).grants[0].generation,1);
+});

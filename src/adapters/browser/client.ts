@@ -73,6 +73,7 @@ function command(kind: string, payload: JsonObject): void {
 }
 function reason(code: string): string {
   const text = code.toLowerCase();
+  if (code === 'dead-unit') return 'Ally is rebuilding — issue a new order when it returns';
   if (text.includes('cooldown')) return 'Ability is recharging';
   if (text.includes('range')) return 'Target out of range — move closer';
   if (text.includes('dead') || text.includes('alive')) return 'Runner is rebuilding — wait for respawn';
@@ -199,6 +200,10 @@ function frame(now: number): void {
 function unitHud(): void {
   el('unit-orders').hidden = !unitSelected; el('select-ally').setAttribute('aria-pressed', String(unitSelected));
   const view = owned(), unitId = view?.grants[0]?.unitId, order = view?.orders.find(o => o.unitId === unitId), report = view?.reports.find(r => r.unitId === unitId);
+  const heroAlive = publicView(observation).entities.find(e => observation.controlledEntityIds.includes(e.id))?.components.combat?.alive !== false;
+  const unavailable = !!unitId && !!view?.unavailableUnitIds?.includes(unitId);
+  for (const kind of ['defend','secure','follow','cancel']) el<HTMLButtonElement>(`order-${kind}`).disabled = !running || !heroAlive || unavailable;
+  if (unavailable || !heroAlive) { el('order-status').textContent = `${heroAlive ? 'Ally' : 'Hero'} rebuilding · previous order ended`; el('unit-report').textContent = 'Issue a new intention when both units are online'; return; }
   const stateLabels: Record<string,string> = { pending:'pending delivery', active:'active', cancelled:'cancelled', expired:'expired', revoked:'ownership ended', dead:'ended after loss' };
   el('order-status').textContent = order ? `${order.kind === 'cancel' ? 'Order' : order.kind[0]!.toUpperCase() + order.kind.slice(1)} · ${stateLabels[order.status] ?? order.status}${order.risk && order.kind !== 'cancel' ? ` · ${order.risk}` : ''}${order.expiresTick && ['pending','active'].includes(order.status) ? ` · ${Math.max(0, (order.expiresTick - observation.tick) / 20).toFixed(1)}s left` : ''}` : 'No order · orders last 60s';
   const modes: Record<string,string> = { idle:'Waiting', defend:'Defending', defending:'Defending', secure:'Securing', securing:'Securing', follow:'Following', following:'Following', engage:'Engaging', engaging:'Engaging', attack:'Attacking', retreat:'Retreating', retreating:'Retreating', holding:'Holding', moving:'Moving', blocked:'Route blocked', lost:'Waiting for commander', commander:'Commander' };

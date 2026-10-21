@@ -39,7 +39,7 @@ objective.advance = s=>s;
 objective.project = s=>({world:s,entities:[]});
 
 const command = base('command.owned','input',[dep('world.planar')],object({deliveryTicks:{const:2},reportTicks:{const:4},grants:arr(grantSchema,4)}),object({grants:arr(grantSchema,4),orders:arr(activeSchema,4),reports:arr(reportStateSchema,4),reportQueue:arr(reportStateSchema),leaders:arr(reportStateSchema,4),leaderQueue:arr(reportStateSchema),deadLatch:arr(identifier,4),deliveryTicks:{const:2},reportTicks:{const:4}}));
-command.descriptor = {...command.descriptor,reads:['world.planar','movement.planar','combat.runner']};
+command.descriptor = {...command.descriptor,version:'0.1.1',configurationSchemaId:'command.owned/config/0.1.1',stateSchemaId:'command.owned/state/0.1.1',reads:['world.planar','movement.planar','combat.runner']};
 const action = (kind:string,schema:object) => ({capability:{kind,version:'0.1.0',payloadSchemaId:`${kind}/0.1.0`},schema});
 command.actions = [action('command.order',orderSchema),action('command.transfer',transferSchema),action('command.report',reportSchema)];
 command.eventKinds = ['command.applied','command.superseded','command.invalidated'];
@@ -110,7 +110,7 @@ command.advance = (raw,commands,_cfg,c) => {
 };
 command.project = (raw,id,c) => {
   const s=raw as unknown as State,grants=s.grants.filter(g=>g.commanderId===id||g.unitControllerId===id);
-  return {world:json({grants,orders:s.orders.filter(o=>grants.some(g=>g.unitId===o.unitId&&(g.commanderId===id||(o.status==='active'&&o.effectiveTick<=c.tick&&o.expiresTick!>c.tick)))),reports:s.reports.filter(r=>grants.some(g=>g.unitId===r.unitId&&g.commanderId===id)),leaders:s.leaders.filter(r=>grants.some(g=>g.commanderActorId===r.unitId&&g.unitControllerId===id&&g.generation===r.generation)),deliveryTicks:s.deliveryTicks,reportTicks:s.reportTicks}),entities:[]};
+  return {world:json({grants,unavailableUnitIds:s.deadLatch.filter(unitId=>grants.some(g=>g.unitId===unitId)),orders:s.orders.filter(o=>grants.some(g=>g.unitId===o.unitId&&(g.commanderId===id||(o.status==='active'&&o.effectiveTick<=c.tick&&o.expiresTick!>c.tick)))),reports:s.reports.filter(r=>grants.some(g=>g.unitId===r.unitId&&g.commanderId===id)),leaders:s.leaders.filter(r=>grants.some(g=>g.commanderActorId===r.unitId&&g.unitControllerId===id&&g.generation===r.generation)),deliveryTicks:s.deliveryTicks,reportTicks:s.reportTicks}),entities:[]};
 };
 
 const crossing = base('rules.crossing','termination',[dep('combat.runner')],object({}),object({terminal:{type:'string'},winners:arr(identifier,2),defeated:arr(identifier,2)}));

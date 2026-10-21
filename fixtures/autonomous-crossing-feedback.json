@@ -1,0 +1,143 @@
+{
+  "id": "003-autonomous-crossing",
+  "version": "0.2.0",
+  "seed": 104729,
+  "tickRateHz": 20,
+  "maxTicks": 1800,
+  "maxCommandLeadTicks": 40,
+  "maxCommandAgeTicks": 20,
+  "controllers": [
+    {
+      "id": "p1",
+      "actors": [
+        "body-p1"
+      ],
+      "budget": {
+        "decisionIntervalTicks": 1,
+        "reactionTicks": 0,
+        "actionLimitPerTick": 1
+      },
+      "policyId": "human.mouse-keyboard",
+      "policyVersion": "0.3.0"
+    },
+    {
+      "id": "a1",
+      "actors": [
+        "body-a1"
+      ],
+      "budget": {
+        "decisionIntervalTicks": 4,
+        "reactionTicks": 2,
+        "actionLimitPerTick": 2
+      },
+      "policyId": "autonomy.responsive",
+      "policyVersion": "0.1.0"
+    },
+    {
+      "id": "p2",
+      "actors": [
+        "body-p2"
+      ],
+      "budget": {
+        "decisionIntervalTicks": 4,
+        "reactionTicks": 4,
+        "actionLimitPerTick": 1
+      },
+      "policyId": "baseline.utility",
+      "policyVersion": "0.1.0"
+    },
+    {
+      "id": "p3",
+      "actors": [
+        "body-p3"
+      ],
+      "budget": {
+        "decisionIntervalTicks": 4,
+        "reactionTicks": 4,
+        "actionLimitPerTick": 1
+      },
+      "policyId": "baseline.utility",
+      "policyVersion": "0.1.0"
+    }
+  ],
+  "modules": [
+    {
+      "id": "world.planar",
+      "version": "0.2.0",
+      "config": {
+        "width": 80,
+        "depth": 60,
+        "layout": "autonomous-crossing",
+        "variant": "crossing"
+      }
+    },
+    {
+      "id": "movement.planar",
+      "version": "0.2.0",
+      "config": {
+        "speed": 6,
+        "bodyRadius": 0.6
+      }
+    },
+    {
+      "id": "perception.radius-los",
+      "version": "0.2.0",
+      "config": {
+        "radius": 18,
+        "shareTeamVision": false
+      }
+    },
+    {
+      "id": "combat.runner",
+      "version": "0.2.0",
+      "config": {
+        "health": 100,
+        "basicDamage": 10,
+        "basicRange": 8,
+        "basicIntervalTicks": 16,
+        "pulseDamage": 25,
+        "pulseRange": 14,
+        "pulseRadius": 0.6,
+        "pulseSpeed": 24,
+        "pulseWindupTicks": 6,
+        "pulseCooldownTicks": 100,
+        "dashDistance": 6,
+        "dashDurationTicks": 4,
+        "dashCooldownTicks": 120,
+        "respawnTicks": 80
+      }
+    },
+    {
+      "id": "objective.relay",
+      "version": "0.2.0",
+      "config": {}
+    },
+    {
+      "id": "orientation.combat",
+      "version": "0.2.0",
+      "config": {}
+    },
+    {
+      "id": "command.owned",
+      "version": "0.1.1",
+      "config": {
+        "deliveryTicks": 2,
+        "reportTicks": 4,
+        "grants": [
+          {
+            "unitId": "body-a1",
+            "unitControllerId": "a1",
+            "commanderId": "p1",
+            "commanderActorId": "body-p1",
+            "generation": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "rules.crossing",
+      "version": "0.1.0",
+      "config": {}
+    }
+  ]
+}
